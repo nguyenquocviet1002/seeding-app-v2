@@ -1,0 +1,28 @@
+.inner {
+  background-color: #fff;
+  position: relative;
+  border-radius: 0.625rem;
+  border: 1px solid #e6e6e6;
+  overflow: hidden;
+}
+.head {
+  position: relative;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 1.5rem 1.25rem 1.25rem;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title {
+  font-weight: 600;
+  font-size: 18px;
+}
+.action {
+  display: flex;
+  flex-wrap: wrap;
+}
+.table {
+  padding: 0 1.125rem;
+}

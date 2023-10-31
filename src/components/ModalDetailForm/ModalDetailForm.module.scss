@@ -1,0 +1,31 @@
+.group {
+  display: flex;
+  margin: 0 -5px 10px;
+  &--full {
+    display: block;
+  }
+}
+.control {
+  width: 50%;
+  margin: 0 5px;
+}
+.label {
+  display: block;
+  color: #111827;
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+.input {
+  display: block;
+  width: 100%;
+  color: #111827;
+  padding: 0.525rem;
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  outline: none;
+}
+.link {
+  color: #1c64f2;
+  border-color: #1c64f2;
+  transition: all 0.3s;
+}

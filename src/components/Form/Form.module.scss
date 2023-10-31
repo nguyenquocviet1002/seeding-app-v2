@@ -1,0 +1,45 @@
+.inner {
+  background-color: #fff;
+  position: relative;
+  border-radius: 0.625rem;
+  border: 1px solid #e6e6e6;
+  overflow: hidden;
+}
+.head {
+  position: relative;
+  border-bottom: 1px solid #e6e6e6;
+  padding: 1.5rem 1.25rem 1.25rem;
+}
+.top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.title {
+  font-weight: 600;
+  font-size: 18px;
+}
+.action {
+  display: flex;
+  flex-wrap: wrap;
+}
+.table {
+  padding: 0 1.125rem;
+}
+.dropdown {
+  position: absolute;
+  width: 240px;
+  border-radius: 0.375rem;
+  margin: 0;
+  display: block;
+  right: 0;
+  left: auto;
+  top: 100%;
+  z-index: 4;
+  overflow: hidden;
+  box-shadow: 0 0 3.125rem 0 rgba(82, 63, 105, 0.15);
+  padding: 0.5rem 0;
+  background-color: #fff;
+  display: none;
+  visibility: hidden;
+}

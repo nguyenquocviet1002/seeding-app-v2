@@ -1,0 +1,39 @@
+.bot {
+  display: flex;
+}
+.aside {
+  max-width: 50%;
+  width: 100%;
+}
+.infoName {
+  display: flex;
+  align-items: center;
+  font-size: 17px;
+  font-weight: 600;
+}
+.infoIcon {
+  width: 20px;
+  margin-right: 5px;
+  img {
+    width: 100%;
+    height: auto;
+  }
+}
+.infoContent {
+  margin-top: 10px;
+  margin-left: 25px;
+}
+.infoContentItem {
+  display: flex;
+  padding: 5px 0;
+}
+.infoLabel {
+  max-width: 40%;
+  width: 100%;
+  &--1 {
+    max-width: 20%;
+  }
+}
+.infoValue {
+  flex: 1;
+}

@@ -1,0 +1,14 @@
+.main {
+  padding-top: 4.375rem;
+  margin-left: 15rem;
+  transition: all 0.2s ease;
+}
+.content {
+  padding-top: 1.525rem;
+  padding-bottom: 1.525rem;
+}
+@media (max-width: 1024px) {
+  .main {
+    margin-left: 0;
+  }
+}

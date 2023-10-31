@@ -1,6 +1,7 @@
 {
   "name": "manage-social",
   "version": "0.1.0",
+  "homepage": "https://scigroup.com.vn/app/seeding-v2/",
   "private": true,
   "dependencies": {
     "@tanstack/react-query": "^4.35.3",

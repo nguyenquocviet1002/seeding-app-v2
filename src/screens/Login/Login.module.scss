@@ -71,6 +71,21 @@
       background-color: #5a95b8;
     }
   }
+  &__control {
+    position: relative;
+  }
+  &__change {
+    position: absolute;
+    width: 13px;
+    height: 13px;
+    display: flex;
+    right: 10px;
+    top: 11px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: contain;
+    transition: all 0.15s linear;
+  }
   @media (max-width: 414px) {
     &__box {
       padding: 30px;

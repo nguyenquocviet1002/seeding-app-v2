@@ -1,17 +1,17 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useModal } from '@/hooks/useModal';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { getUserFn } from '@/api/user';
+import { tokenName } from '@/utils/config';
 import Button from '../Button';
 import ModalChangePassword from '../ModalChangePassword';
 import headerStyles from './Header.module.scss';
-import { useState } from 'react';
 
-const Header = () => {
-  const [user, setUser] = useState();
+const Header = ({ showToast }) => {
   const [isDropdown, setIsDropdown] = useState(false);
-  const [token, setToken] = useLocalStorage('token-manage', null);
+  const [token] = useLocalStorage(tokenName, null);
   const navigate = useNavigate();
   const { isShowing, cpn, toggle } = useModal();
 
@@ -20,11 +20,9 @@ const Header = () => {
     queryFn: () => getUserFn(token),
     onSuccess: (data) => {
       if (data.data.message === 'token seems to have expired or invalid') {
-        alert('Lỗi hệ thống! Vui lòng đăng nhập lại');
-        setToken(null);
         navigate('/login');
-      } else {
-        setUser(data.data.data.username);
+        showToast('Lỗi hệ thống! Vui lòng đăng nhập lại ', 'failure');
+        localStorage.clear();
       }
     },
   });
@@ -49,28 +47,20 @@ const Header = () => {
                 </Button>
               </div>
               <div className={headerStyles['user']}>
-                <p className={headerStyles['userName']}>{queryGetUser.isSuccess && user}</p>
+                <p className={headerStyles['userName']}>
+                  {queryGetUser.isSuccess && queryGetUser.data.data.data.username}
+                </p>
                 <div className={headerStyles['userAvt']} onClick={() => setIsDropdown(!isDropdown)}>
                   <img src={`${process.env.PUBLIC_URL}/images/profile.png`} alt="" />
                 </div>
                 {isDropdown && (
                   <div className={headerStyles['dropdown']}>
-                    <div className={headerStyles['header__dropdownCard']}>
-                      {queryGetUser.isSuccess && <div className={headerStyles['header__dropdownHead']}>{user}</div>}
-                      <div className={headerStyles['header__dropdownBody']}>
-                        <div
-                          className={headerStyles['header__dropdownLink']}
-                          onClick={() => toggle('ModalChangePassword')}
-                        >
-                          <img src={`${process.env.PUBLIC_URL}/images/key-solid.svg`} alt="" />
-                          <span>Đổi mật khẩu</span>
-                        </div>
-                        <div className={headerStyles['header__dropdownLink']} onClick={() => logout()}>
-                          <img src={`${process.env.PUBLIC_URL}/images/right-from-bracket-solid.svg`} alt="" />
-                          <span>Đăng xuất</span>
-                        </div>
-                      </div>
-                    </div>
+                    <Button classItem="light" icon="key-solid.svg" event={() => toggle('ModalChangePassword')}>
+                      Đổi mật khẩu
+                    </Button>
+                    <Button classItem="light" icon="right-from-bracket-solid.svg" event={logout}>
+                      Đăng xuất
+                    </Button>
                   </div>
                 )}
               </div>
@@ -78,7 +68,7 @@ const Header = () => {
           </div>
         </div>
       </header>
-      <ModalChangePassword isShow={isShowing} hide={toggle} element={cpn} />
+      <ModalChangePassword isShow={isShowing} hide={toggle} element={cpn} toast={showToast} />
     </>
   );
 };

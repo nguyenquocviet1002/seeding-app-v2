@@ -18,11 +18,11 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
                 <div className={modalDetailBookingStyles['infoContent']}>
                   <div className={modalDetailBookingStyles['infoContentItem']}>
                     <div className={modalDetailBookingStyles['infoLabel']}>Họ tên:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>{data.company}</div>
+                    <div className={modalDetailBookingStyles['infoValue']}>{data.contact_name}</div>
                   </div>
                   <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Họ tên:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>{data.company}</div>
+                    <div className={modalDetailBookingStyles['infoLabel']}>Điện thoại 1:</div>
+                    <div className={modalDetailBookingStyles['infoValue']}>{data.phone_1}</div>
                   </div>
                 </div>
               </div>

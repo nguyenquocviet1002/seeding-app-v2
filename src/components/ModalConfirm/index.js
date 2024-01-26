@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import { useEffect, useRef } from 'react';
 import modalConfirmStyles from './ModalConfirm.module.scss';
 
-const ModalConfirm = ({ isShow, hide, element, children }) => {
+const ModalConfirm = ({ isShow, hide, element, children, event }) => {
   const ref = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
@@ -51,6 +51,7 @@ const ModalConfirm = ({ isShow, hide, element, children }) => {
                       className={modalConfirmStyles['modalConfirm__yes']}
                       onClick={() => {
                         hide();
+                        event();
                       }}
                     >
                       Có

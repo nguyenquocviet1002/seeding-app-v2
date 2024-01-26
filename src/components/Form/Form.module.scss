@@ -43,3 +43,18 @@
   display: none;
   visibility: hidden;
 }
+.filter {
+  margin-top: 5px;
+  &__item {
+    display: inline-block;
+    margin-right: 0.3125rem;
+    margin-bottom: 0.3125rem;
+    background-color: #ffdede;
+    color: #ff5e5e;
+    font-size: 12px;
+    font-weight: 400;
+    padding: 5px 12px;
+    border: 0.0625rem solid #fff7f7;
+    border-radius: 0.25rem;
+  }
+}

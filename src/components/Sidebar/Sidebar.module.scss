@@ -22,3 +22,33 @@
 .nav {
   padding-top: 2rem;
 }
+.buttonMenu {
+  display: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+  position: absolute;
+  top: 20px;
+  left: 110%;
+  width: 25px;
+  height: 29px;
+  transition: all 0.15s ease-in-out;
+  cursor: pointer;
+}
+.backdrop {
+  background-color: rgba(17, 24, 39, 0.5);
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  z-index: 3;
+}
+@media (max-width: 1024px) {
+  .sidebar {
+    transform: translateX(-100%);
+    &.show {
+      transform: translateX(0);
+    }
+  }
+  .buttonMenu {
+    display: block;
+  }
+}

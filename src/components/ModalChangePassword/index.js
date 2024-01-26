@@ -1,16 +1,17 @@
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { updatePasswordFn } from '@/api/user';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useNavigate } from 'react-router-dom';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { updatePasswordFn } from '@/api/user';
+import { tokenName } from '@/utils/config';
 import Modal from '../Modal';
 import Button from '../Button';
 import modalChangePasswordStyles from './ModalChangePassword.module.scss';
 
-const ModalChangePassword = ({ isShow, hide, element }) => {
+const ModalChangePassword = ({ isShow, hide, element, toast }) => {
   // eslint-disable-next-line no-unused-vars
-  const [token, setToken] = useLocalStorage('token-manage', null);
+  const [token, setToken] = useLocalStorage(tokenName, null);
   const initialPassword = {
     password: '',
     confirmPassword: '',
@@ -35,7 +36,7 @@ const ModalChangePassword = ({ isShow, hide, element }) => {
       } else if (data.data.result.stage === false) {
         setMessage(data.data.result.message);
       } else {
-        alert(data.data.result.message.content);
+        toast(data.data.result.message.content, 'success');
         hide();
         setIsTypeP(false);
         setIsTypeC(false);

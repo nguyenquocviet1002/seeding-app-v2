@@ -48,6 +48,11 @@
       }
     }
   }
+  &__password {
+    input {
+      padding: 0.625rem 35px 0.625rem 0.625rem;
+    }
+  }
   &__message {
     font-weight: 600;
     color: red;
@@ -76,11 +81,11 @@
   }
   &__change {
     position: absolute;
-    width: 13px;
-    height: 13px;
+    width: 16px;
+    height: 14px;
     display: flex;
     right: 10px;
-    top: 11px;
+    top: 12px;
     background-position: center;
     background-repeat: no-repeat;
     background-size: contain;

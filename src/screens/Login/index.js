@@ -3,27 +3,27 @@ import { useNavigate, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { getTokenFn } from '@/api/auth';
+import { tokenName } from '@/utils/config';
 import Loading from '@/components/Loading';
 import loginStyles from './Login.module.scss';
+import { useEffect } from 'react';
 
-const ScreenLogin = () => {
+const ScreenLogin = ({ showToast }) => {
   const navigate = useNavigate();
   const initialUser = {
     user: '',
     password: '',
   };
-  const [token, setToken] = useLocalStorage('token-manage', null);
+  const [token, setToken] = useLocalStorage(tokenName, null);
   const [user, setUser] = useState(initialUser);
   const [message, setMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
   const [isTypeP, setIsTypeP] = useState(false);
 
   const queryLogin = useQuery({
-    queryKey: ['login', user.user],
+    queryKey: ['login'],
     queryFn: () => getTokenFn(user),
     enabled: false,
     onSuccess: (data) => {
-      setIsLoading(false);
       if (data.data.message && data.data.type === 'missing error') {
         setMessage('Tài khoản hoặc mật khẩu không được để trống');
       } else if (data.data.message && data.data.type === 'Access denied') {
@@ -33,19 +33,26 @@ const ScreenLogin = () => {
       } else {
         setToken(data.data.access_token);
         setUser(initialUser);
-        navigate('/form');
+        showToast('Đăng nhập thành công', 'success');
+        setTimeout(() => {
+          navigate('/form');
+        }, 1000);
       }
     },
+  });
+
+  useEffect(() => {
+    if (token) {
+      navigate('/form');
+    }
   });
 
   const handleChange = (name) => (event) => {
     setUser((prev) => ({ ...prev, [name]: event.target.value }));
   };
   const handleSubmit = () => {
-    setIsLoading(true);
     if (!user.user || !user.password) {
       setMessage('Số điện thoại và mật khẩu không được để trống');
-      setIsLoading(false);
     } else {
       queryLogin.refetch();
     }
@@ -76,7 +83,7 @@ const ScreenLogin = () => {
             </div>
             <div className={loginStyles['login__group']}>
               <label>Mật khẩu</label>
-              <div className={loginStyles['login__control']}>
+              <div className={`${loginStyles['login__control']} ${loginStyles['login__password']}`}>
                 <input
                   type={!isTypeP ? 'password' : 'text'}
                   className={message ? loginStyles['login__error'] : ''}
@@ -101,7 +108,7 @@ const ScreenLogin = () => {
           </div>
         </div>
       </div>
-      {isLoading && <Loading />}
+      {queryLogin.isFetching && <Loading />}
     </>
   );
 };

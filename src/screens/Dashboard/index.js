@@ -1,11 +1,23 @@
-import { Outlet } from 'react-router-dom';
+import { useEffect } from 'react';
+import { Outlet, useNavigate } from 'react-router-dom';
+import { tokenName } from '@/utils/config';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import DefaultLayout from '@/layout/DefaultLayout';
 
-const ScreenDashboard = () => {
+const ScreenDashboard = ({ showToast }) => {
+  const [token] = useLocalStorage(tokenName, null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!token) {
+      navigate('/login');
+    }
+  });
   return (
-    <DefaultLayout>
-      <Outlet />
-    </DefaultLayout>
+    token && (
+      <DefaultLayout showToast={showToast}>
+        <Outlet context={showToast} />
+      </DefaultLayout>
+    )
   );
 };
 

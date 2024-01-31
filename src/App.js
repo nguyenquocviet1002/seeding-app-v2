@@ -8,6 +8,7 @@ import ScreenPageNotFound from './screens/PageNotFound';
 import Form from './components/Form';
 import Booking from './components/Booking';
 import ToastList from './components/ToastList/ToastList';
+import QuantityFB from './components/QuantityFB';
 
 function App() {
   const [token] = useLocalStorage(tokenName, null);
@@ -21,6 +22,7 @@ function App() {
         <Route path="/" element={<ScreenDashboard showToast={showToast} />}>
           <Route path="form" element={<Form />} />
           <Route path="lead-booking" element={<Booking />} />
+          <Route path="quantity-fb" element={<QuantityFB />} />
         </Route>
         <Route path="*" element={<ScreenPageNotFound />} />
       </Routes>

@@ -12,17 +12,17 @@ export const MENU = (role) => {
         icon: 'calendar-regular.svg',
       },
       {
-        link: 'quantity-fb/week',
+        link: 'quantity-fb',
         title: 'Báo cáo số lượng form/booking',
         icon: 'chart-column-solid.svg',
       },
       {
-        link: 'quantity-success/week',
+        link: 'quantity-success',
         title: 'Báo cáo số lượng khách hàng thành công',
         icon: 'chart-line-solid.svg',
       },
       {
-        link: 'expense/week',
+        link: 'expense',
         title: 'Báo cáo chi phí',
         icon: 'sack-dollar-solid.svg',
       },
@@ -50,17 +50,17 @@ export const MENU = (role) => {
         icon: 'calendar-regular.svg',
       },
       {
-        link: 'quantity-fb/week',
+        link: 'quantity-fb',
         title: 'Báo cáo số lượng form/booking',
         icon: 'chart-column-solid.svg',
       },
       {
-        link: 'quantity-success/week',
+        link: 'quantity-success',
         title: 'Báo cáo số lượng khách hàng thành công',
         icon: 'chart-line-solid.svg',
       },
       {
-        link: 'expense/week',
+        link: 'expense',
         title: 'Báo cáo chi phí',
         icon: 'sack-dollar-solid.svg',
       },

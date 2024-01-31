@@ -23,3 +23,51 @@ export function removeLastItem(data) {
     return [];
   }
 }
+
+export const formatDate = (date) => {
+  if (date) {
+    const newDate = new Date(date);
+    return `${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()}`;
+  }
+  return '';
+};
+
+export function getDaysOfWeek() {
+  try {
+    const today = new Date();
+    const date = new Date(today);
+    const day = date.getDay();
+    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
+    const firstDay = new Date(date.setDate(diff));
+    const lastDay = new Date(firstDay);
+    lastDay.setDate(lastDay.getDate() + 6);
+    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+  } catch (error) {
+    return { firstDay: '', lastDay: '' };
+  }
+}
+
+export function getDaysOfMonth() {
+  try {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+    const firstDay = new Date(year, month, 1);
+    const lastDay = new Date(year, month + 1, 0);
+    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+  } catch (error) {
+    return { firstDay: '', lastDay: '' };
+  }
+}
+
+export function getDaysOfYear() {
+  try {
+    const date = new Date();
+    const year = date.getFullYear();
+    const firstDay = new Date(year, 0, 1);
+    const lastDay = new Date(year, 11, 31);
+    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+  } catch (error) {
+    return { firstDay: '', lastDay: '' };
+  }
+}

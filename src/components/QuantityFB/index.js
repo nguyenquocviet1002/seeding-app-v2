@@ -16,6 +16,8 @@ import { getFormFn } from '@/api/form';
 import { getBookingFn } from '@/api/booking';
 import { quantityDate, quantityWeek, quantityWeekForBrand, quantityYear } from '@/utils/quantityFB';
 import Loading from '../Loading';
+import { getAllUserFn } from '@/api/user';
+import SelectUser from '../SelectUser';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 const options = {
@@ -35,6 +37,8 @@ const options = {
 const QuantityFB = () => {
   const [token] = useLocalStorage(tokenName, null);
   const initialDate = getDaysOfWeek();
+  const [allUser, setAllUser] = useState([]);
+  const [typeLabel, setTypeLabel] = useState({ label: 'Nhân viên', code: '' });
   const [bodyForm, setBodyForm] = useState({
     brand_id: '',
     type: 'seeding',
@@ -47,7 +51,7 @@ const QuantityFB = () => {
     name: '',
     start_date: initialDate.firstDay,
     end_date: initialDate.lastDay,
-    user_seeding: '',
+    user_seeding: typeLabel.code,
     token: token,
   });
   const [bodyBooking, setBodyBooking] = useState({
@@ -61,13 +65,15 @@ const QuantityFB = () => {
     name: '',
     phone: '',
     code: '',
-    user_seeding: '',
+    user_seeding: typeLabel.code,
   });
 
   const [data, setData] = useState();
   const [table, setTable] = useState();
-
   const [isActive, setIsActive] = useState('week');
+  const [type, setType] = useState('week');
+  const [dateInput, setDateInput] = useState({ startDate: '', endDate: '' });
+  const [isDate, setIsDate] = useState(false);
 
   const queryGetForm = useQuery({
     queryKey: ['get-form', bodyForm],
@@ -77,10 +83,17 @@ const QuantityFB = () => {
     queryKey: ['get-booking', bodyBooking],
     queryFn: () => getBookingFn(bodyBooking),
   });
+  const queryGetAllUser = useQuery({
+    queryKey: ['get-all-user', token],
+    queryFn: () => getAllUserFn({ token: token, code_user: '' }),
+    onSuccess: (data) => {
+      setAllUser(removeFirstItem(data.data.data));
+    },
+  });
 
   useEffect(() => {
     try {
-      if (isActive === 'week') {
+      if (type === 'week') {
         if (queryGetForm.isSuccess && queryGetBooking.isSuccess) {
           const date = getDaysOfWeek();
           setBodyForm((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
@@ -100,7 +113,7 @@ const QuantityFB = () => {
           setTable(table);
         }
       }
-      if (isActive === 'month') {
+      if (type === 'month') {
         if (queryGetForm.isSuccess && queryGetBooking.isSuccess) {
           const date = getDaysOfMonth();
           setBodyForm((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
@@ -120,7 +133,7 @@ const QuantityFB = () => {
           setTable(table);
         }
       }
-      if (isActive === 'year') {
+      if (type === 'year') {
         if (queryGetForm.isSuccess && queryGetBooking.isSuccess) {
           const date = getDaysOfYear();
           setBodyForm((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
@@ -128,6 +141,25 @@ const QuantityFB = () => {
           const data = quantityYear(
             date.firstDay,
             date.lastDay,
+            removeFirstItem(queryGetForm.data.data.data),
+            removeLastItem(removeFirstItem(queryGetBooking.data.data.data)),
+          );
+          setData(data);
+
+          const table = quantityWeekForBrand(
+            removeFirstItem(queryGetForm.data.data.data),
+            removeLastItem(removeFirstItem(queryGetBooking.data.data.data)),
+          );
+          setTable(table);
+        }
+      }
+      if (type === 'date') {
+        if (queryGetForm.isSuccess && queryGetBooking.isSuccess) {
+          setBodyForm((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
+          setBodyBooking((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
+          const data = quantityDate(
+            dateInput.startDate,
+            dateInput.endDate,
             removeFirstItem(queryGetForm.data.data.data),
             removeLastItem(removeFirstItem(queryGetBooking.data.data.data)),
           );
@@ -148,16 +180,20 @@ const QuantityFB = () => {
     initialDate.lastDay,
     queryGetBooking.data,
     queryGetForm.data,
-    isActive,
+    type,
     queryGetForm.isSuccess,
     queryGetBooking.isSuccess,
+    dateInput,
   ]);
 
   const handleActive = (type) => {
     setIsActive(type);
   };
   const handleTab = (type) => {
-    setIsActive(type);
+    setType(type);
+  };
+  const setUser = (e) => {
+    setTypeLabel({ label: e.target.textContent, value: e.target.id });
   };
   return (
     <>
@@ -170,6 +206,7 @@ const QuantityFB = () => {
               onClick={() => {
                 handleTab('week');
                 handleActive('week');
+                setIsDate(false);
               }}
             >
               Tuần
@@ -179,6 +216,7 @@ const QuantityFB = () => {
               onClick={() => {
                 handleTab('month');
                 handleActive('month');
+                setIsDate(false);
               }}
             >
               Tháng
@@ -188,6 +226,7 @@ const QuantityFB = () => {
               onClick={() => {
                 handleTab('year');
                 handleActive('year');
+                setIsDate(false);
               }}
             >
               Năm
@@ -195,25 +234,38 @@ const QuantityFB = () => {
             <button
               className={`${quantityFBStyles['cta']} ${isActive === 'date' ? quantityFBStyles['active'] : ''}`}
               onClick={() => {
-                handleTab('date');
                 handleActive('date');
+                setIsDate(true);
               }}
             >
               Khoảng ngày
             </button>
+            <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
           </div>
         </div>
-        <div className={quantityFBStyles['date']}>
-          <div className={quantityFBStyles['date__group']}>
-            <label className={quantityFBStyles['date__label']}>Ngày bắt đầu</label>
-            <input type="date" className={quantityFBStyles['date__input']} />
+        {isDate && (
+          <div className={quantityFBStyles['date']}>
+            <div className={quantityFBStyles['date__group']}>
+              <label className={quantityFBStyles['date__label']}>Ngày bắt đầu</label>
+              <input
+                type="date"
+                className={quantityFBStyles['date__input']}
+                onChange={(e) => setDateInput((prev) => ({ ...prev, startDate: e.target.value }))}
+              />
+            </div>
+            <div className={quantityFBStyles['date__group']}>
+              <label className={quantityFBStyles['date__label']}>Ngày kết thúc</label>
+              <input
+                type="date"
+                className={quantityFBStyles['date__input']}
+                onChange={(e) => setDateInput((prev) => ({ ...prev, endDate: e.target.value }))}
+              />
+            </div>
+            <button className={quantityFBStyles['date__submit']} onClick={() => handleTab('date')}>
+              Tìm
+            </button>
           </div>
-          <div className={quantityFBStyles['date__group']}>
-            <label className={quantityFBStyles['date__label']}>Ngày kết thúc</label>
-            <input type="date" className={quantityFBStyles['date__input']} />
-          </div>
-          <button className={quantityFBStyles['date__submit']}>Tìm</button>
-        </div>
+        )}
       </div>
       <div className={quantityFBStyles['main']}>
         <div className={quantityFBStyles['chart']}>{data && <Bar options={options} data={data} />}</div>

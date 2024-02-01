@@ -12,6 +12,7 @@ import { getBookingFn } from '@/api/booking';
 import { getUserFn } from '@/api/user';
 import Loading from '../Loading';
 import ModalSearchBooking from '../ModalSearchBooking';
+import dayjs from 'dayjs';
 
 const Booking = () => {
   const [token] = useLocalStorage(tokenName, null);
@@ -69,12 +70,12 @@ const Booking = () => {
     },
     {
       name: 'Ngày hẹn lịch',
-      selector: (row) => new Date(row.booking_date).toLocaleDateString('en-GB'),
+      selector: (row) => dayjs(row.booking_date).format('DD/MM/YYYY'),
       omit: typeLabel.value === 'lead' ? true : false,
     },
     {
       name: 'Hiệu lực đến',
-      selector: (row) => new Date(row.day_expire).toLocaleDateString('en-GB'),
+      selector: (row) => dayjs(row.day_expire).format('DD/MM/YYYY'),
       omit: typeLabel.value === 'lead' ? true : false,
     },
     {

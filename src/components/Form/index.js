@@ -1,11 +1,12 @@
 import { useState } from 'react';
-import { useModal } from '@/hooks/useModal';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useModal } from '@/hooks/useModal';
 import { removeFirstItem, tokenName } from '@/utils/config';
 import { getFormFn, removeFormFn } from '@/api/form';
 import { getUserFn } from '@/api/user';
+import dayjs from 'dayjs';
 import Button from '../Button';
 import Table from '../Table';
 import ModalDetailForm from '../ModalDetailForm';
@@ -17,8 +18,7 @@ import Loading from '../Loading';
 import formStyles from './Form.module.scss';
 
 const Form = () => {
-  // eslint-disable-next-line no-unused-vars
-  const [token, setToken] = useLocalStorage(tokenName, null);
+  const [token] = useLocalStorage(tokenName, null);
   const initial = {
     brand_id: '',
     type: 'seeding',
@@ -41,6 +41,7 @@ const Form = () => {
   const [filter, setFilter] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const { isShowing, cpn, toggle } = useModal();
+
   const showToast = useOutletContext();
 
   const queryClient = useQueryClient();
@@ -93,7 +94,7 @@ const Form = () => {
     },
     {
       name: 'Ngày tạo',
-      selector: (row) => new Date(row.create_date).toLocaleDateString('en-GB'),
+      selector: (row) => dayjs(row.create_date).format('DD/MM/YYYY'),
     },
     {
       name: 'Xem thêm',
@@ -198,12 +199,12 @@ const Form = () => {
                 )}
                 {filter.start_date && (
                   <span className={formStyles['filter__item']}>
-                    Ngày bắt đầu: {new Date(filter.start_date).toLocaleDateString('en-GB')}
+                    Ngày bắt đầu: {dayjs(filter.start_date).format('DD/MM/YYYY')}
                   </span>
                 )}
                 {filter.end_date && (
                   <span className={formStyles['filter__item']}>
-                    Ngày kết thúc: {new Date(filter.end_date).toLocaleDateString('en-GB')}
+                    Ngày kết thúc: {dayjs(filter.end_date).format('DD/MM/YYYY')}
                   </span>
                 )}
               </div>

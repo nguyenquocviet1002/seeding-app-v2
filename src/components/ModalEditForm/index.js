@@ -1,16 +1,16 @@
 import ReactDOM from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { tokenName } from '@/utils/config';
+import { getCompanyFn, updateFormFn } from '@/api/form';
 import Modal from '../Modal';
 import Button from '../Button';
 import modalEditForm from './ModalEditForm.module.scss';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { getCompanyFn, updateFormFn } from '@/api/form';
 
 const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
   const [token] = useLocalStorage(tokenName, null);
-  const initial = {
+  const [dataDetail, setDataDetail] = useState({
     token: token,
     type: 'seeding',
     company_id: '',
@@ -22,9 +22,7 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
     note: '',
     script: '',
     interactive_proof: '',
-  };
-
-  const [dataDetail, setDataDetail] = useState(initial);
+  });
   const [company, setCompany] = useState([]);
   const [value, setValue] = useState('');
   const [isCompany, setIsCompany] = useState(false);

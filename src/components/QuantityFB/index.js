@@ -83,7 +83,7 @@ const QuantityFB = () => {
     queryKey: ['get-booking', bodyBooking],
     queryFn: () => getBookingFn(bodyBooking),
   });
-  const queryGetAllUser = useQuery({
+  useQuery({
     queryKey: ['get-all-user', token],
     queryFn: () => getAllUserFn({ token: token, code_user: '' }),
     onSuccess: (data) => {
@@ -194,6 +194,8 @@ const QuantityFB = () => {
   };
   const setUser = (e) => {
     setTypeLabel({ label: e.target.textContent, value: e.target.id });
+    setBodyForm((prev) => ({ ...prev, user_seeding: e.target.id }));
+    setBodyBooking((prev) => ({ ...prev, user_seeding: e.target.id }));
   };
   return (
     <>

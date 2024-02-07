@@ -1,14 +1,14 @@
 import ReactDOM from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getUserFn } from '@/api/user';
 import { tokenName } from '@/utils/config';
+import { getUserFn } from '@/api/user';
+import dayjs from 'dayjs';
 import Modal from '../Modal';
 import modalDetailForm from './ModalDetailForm.module.scss';
 
 const ModalDetailForm = ({ isShow, hide, element, data }) => {
-  // eslint-disable-next-line no-unused-vars
-  const [token, setToken] = useLocalStorage(tokenName, null);
+  const [token] = useLocalStorage(tokenName, null);
 
   const queryGetUser = useQuery({
     queryKey: ['get-user', token],
@@ -109,7 +109,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
                 <input
                   type="text"
                   className={modalDetailForm['input']}
-                  value={data.create_date ? new Date(data.create_date).toLocaleString('en-GB') : 'Trống'}
+                  value={dayjs(data.create_date).format('DD/MM/YYYY, HH:mm:ss')}
                   disabled
                 />
               </div>

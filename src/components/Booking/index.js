@@ -1,18 +1,18 @@
 import { useState } from 'react';
-import { useModal } from '@/hooks/useModal';
-import Button from '../Button';
-import Table from '../Table';
-import ModalDetailBooking from '../ModalDetailBooking';
-import Select from '../Select';
-import bookingStyles from './Booking.module.scss';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { removeFirstItem, removeLastItem, tokenName } from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useModal } from '@/hooks/useModal';
+import { removeFirstItem, removeLastItem, tokenName } from '@/utils/config';
 import { getBookingFn } from '@/api/booking';
 import { getUserFn } from '@/api/user';
-import Loading from '../Loading';
-import ModalSearchBooking from '../ModalSearchBooking';
 import dayjs from 'dayjs';
+import Button from '../Button';
+import Select from '../Select';
+import Table from '../Table';
+import ModalSearchBooking from '../ModalSearchBooking';
+import ModalDetailBooking from '../ModalDetailBooking';
+import Loading from '../Loading';
+import bookingStyles from './Booking.module.scss';
 
 const Booking = () => {
   const [token] = useLocalStorage(tokenName, null);
@@ -38,6 +38,7 @@ const Booking = () => {
   const [totalRows, setTotalRows] = useState(0);
   const [itemDetail, setItemDetail] = useState();
   const [filter, setFilter] = useState();
+
   const { isShowing, cpn, toggle } = useModal();
 
   const queryGetBooking = useQuery({
@@ -81,7 +82,6 @@ const Booking = () => {
     {
       name: 'Trạng thái hiệu lực',
       selector: (row) => row.effect,
-      grow: 0.6,
       omit: typeLabel.value === 'lead' ? true : false,
     },
     {
@@ -169,12 +169,12 @@ const Booking = () => {
                 )}
                 {filter.start_date && (
                   <span className={bookingStyles['filter__item']}>
-                    Ngày bắt đầu: {new Date(filter.start_date).toLocaleDateString('en-GB')}
+                    Ngày bắt đầu: {dayjs(filter.start_date).format('DD/MM/YYYY')}
                   </span>
                 )}
                 {filter.end_date && (
                   <span className={bookingStyles['filter__item']}>
-                    Ngày kết thúc: {new Date(filter.end_date).toLocaleDateString('en-GB')}
+                    Ngày kết thúc: {dayjs(filter.end_date).format('DD/MM/YYYY')}
                   </span>
                 )}
               </div>

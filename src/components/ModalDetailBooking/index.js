@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import dayjs from 'dayjs';
 import Modal from '../Modal';
 import modalDetailBookingStyles from './ModalDetailBooking.module.scss';
 
@@ -36,22 +37,28 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
                       <div className={modalDetailBookingStyles['infoValue']}>{data.city}</div>
                     </div>
                   )}
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Ngày hẹn lịch:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>
-                      {new Date(data.booking_date).toLocaleDateString('en-GB')}
+                  {data.booking_date && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Ngày hẹn lịch:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>
+                        {dayjs(data.booking_date).format('DD/MM/YYYY')}
+                      </div>
                     </div>
-                  </div>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Hiệu lực đến ngày:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>
-                      {new Date(data.day_expire).toLocaleDateString('en-GB')}
+                  )}
+                  {data.day_expire && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Hiệu lực đến ngày:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>
+                        {dayjs(data.day_expire).format('DD/MM/YYYY')}
+                      </div>
                     </div>
-                  </div>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Trạng thái hiệu lực:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>{data.effect}</div>
-                  </div>
+                  )}
+                  {data.effect && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Trạng thái hiệu lực:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>{data.effect}</div>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className={modalDetailBookingStyles['aside']}>
@@ -62,10 +69,12 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
                   <span>Thông tin cá nhân</span>
                 </div>
                 <div className={modalDetailBookingStyles['infoContent']}>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Mã booking:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>{data.code_booking}</div>
-                  </div>
+                  {data.code_booking && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Mã booking:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>{data.code_booking}</div>
+                    </div>
+                  )}
                   <div className={modalDetailBookingStyles['infoContentItem']}>
                     <div className={modalDetailBookingStyles['infoLabel']}>Dịch vụ:</div>
                     <div className={modalDetailBookingStyles['infoValue']}>
@@ -76,38 +85,46 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
                     <div className={modalDetailBookingStyles['infoLabel']}>Trạng thái:</div>
                     <div className={modalDetailBookingStyles['infoValue']}>{data.stage_id}</div>
                   </div>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Đơn giá:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>
-                      {data.dongia
-                        ? data.dongia.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                        : '0 VND'}
+                  {data.dongia > 0 && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Đơn giá:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>
+                        {data.dongia
+                          ? data.dongia.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+                          : '0 VND'}
+                      </div>
                     </div>
-                  </div>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Tiền trước giảm:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>
-                      {data.tien_truoc_giam
-                        ? data.tien_truoc_giam.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                        : '0 VND'}
+                  )}
+                  {data.tien_truoc_giam > 0 && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Tiền trước giảm:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>
+                        {data.tien_truoc_giam
+                          ? data.tien_truoc_giam.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+                          : '0 VND'}
+                      </div>
                     </div>
-                  </div>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Tiền phải thu:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>
-                      {data.tien_phai_thu
-                        ? data.tien_phai_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                        : '0 VND'}
+                  )}
+                  {data.tien_phai_thu > 0 && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Tiền phải thu:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>
+                        {data.tien_phai_thu
+                          ? data.tien_phai_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+                          : '0 VND'}
+                      </div>
                     </div>
-                  </div>
-                  <div className={modalDetailBookingStyles['infoContentItem']}>
-                    <div className={modalDetailBookingStyles['infoLabel']}>Tiền đã thu:</div>
-                    <div className={modalDetailBookingStyles['infoValue']}>
-                      {data.tien_da_thu
-                        ? data.tien_da_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
-                        : '0 VND'}
+                  )}
+                  {data.tien_da_thu > 0 && (
+                    <div className={modalDetailBookingStyles['infoContentItem']}>
+                      <div className={modalDetailBookingStyles['infoLabel']}>Tiền đã thu:</div>
+                      <div className={modalDetailBookingStyles['infoValue']}>
+                        {data.tien_da_thu
+                          ? data.tien_da_thu.toLocaleString('it-IT', { style: 'currency', currency: 'VND' })
+                          : '0 VND'}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
             </div>

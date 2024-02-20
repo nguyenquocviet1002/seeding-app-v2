@@ -15,7 +15,7 @@ const DefaultLayout = ({ children, showToast }) => {
   return (
     <>
       <Header showToast={showToast} />
-      <Sidebar isShow={isShow} toggle={toggleLayout} close={closeLayout} />
+      <Sidebar isShow={isShow} toggleLayout={toggleLayout} close={closeLayout} />
 
       <main className={defaultLayoutStyles['main']}>
         <div className="container-full">

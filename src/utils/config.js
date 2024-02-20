@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const tokenName = 'token-seeding';
 
 export function removeFirstItem(data) {
@@ -24,14 +26,6 @@ export function removeLastItem(data) {
   }
 }
 
-export const formatDate = (date) => {
-  if (date) {
-    const newDate = new Date(date);
-    return `${newDate.getFullYear()}-${newDate.getMonth() + 1}-${newDate.getDate()}`;
-  }
-  return '';
-};
-
 export function getDaysOfWeek() {
   try {
     const today = new Date();
@@ -41,7 +35,7 @@ export function getDaysOfWeek() {
     const firstDay = new Date(date.setDate(diff));
     const lastDay = new Date(firstDay);
     lastDay.setDate(lastDay.getDate() + 6);
-    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+    return { firstDay: dayjs(firstDay).format('YYYY-MM-DD'), lastDay: dayjs(lastDay).format('YYYY-MM-DD') };
   } catch (error) {
     return { firstDay: '', lastDay: '' };
   }
@@ -54,7 +48,7 @@ export function getDaysOfMonth() {
     const month = date.getMonth();
     const firstDay = new Date(year, month, 1);
     const lastDay = new Date(year, month + 1, 0);
-    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+    return { firstDay: dayjs(firstDay).format('YYYY-MM-DD'), lastDay: dayjs(lastDay).format('YYYY-MM-DD') };
   } catch (error) {
     return { firstDay: '', lastDay: '' };
   }
@@ -66,7 +60,7 @@ export function getDaysOfYear() {
     const year = date.getFullYear();
     const firstDay = new Date(year, 0, 1);
     const lastDay = new Date(year, 11, 31);
-    return { firstDay: formatDate(firstDay), lastDay: formatDate(lastDay) };
+    return { firstDay: dayjs(firstDay).format('YYYY-MM-DD'), lastDay: dayjs(lastDay).format('YYYY-MM-DD') };
   } catch (error) {
     return { firstDay: '', lastDay: '' };
   }

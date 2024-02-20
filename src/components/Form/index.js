@@ -215,7 +215,7 @@ const Form = () => {
           <Table
             columns={columns}
             data={
-              queryGetForm.isSuccess && queryGetForm.data.data.count > 1
+              queryGetForm.isSuccess && queryGetForm.data.data.count > 0
                 ? removeFirstItem(queryGetForm.data.data.data)
                 : []
             }

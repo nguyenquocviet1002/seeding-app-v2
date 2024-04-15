@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import selectStyles from './Select.module.scss';
 
-const Select = ({ labelIndex, data, eventClick }) => {
+const Select = ({ labelIndex, data, eventClick, keyData, code, all }) => {
   const [isDropdown, setIsDropdown] = useState(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -24,17 +24,29 @@ const Select = ({ labelIndex, data, eventClick }) => {
       </button>
       {isDropdown && (
         <div className={selectStyles['select__dropdown']}>
-          {data.map((item, index) => (
+          {all && (
             <div
-              key={index}
               className={selectStyles['select__item']}
-              id={item.value}
+              id=""
               onClick={(e) => {
                 eventClick(e);
                 setIsDropdown(false);
               }}
             >
-              {item.label}
+              Tất cả
+            </div>
+          )}
+          {data.map((item, index) => (
+            <div
+              key={index}
+              className={selectStyles['select__item']}
+              id={!code ? item.value : item[code]}
+              onClick={(e) => {
+                eventClick(e);
+                setIsDropdown(false);
+              }}
+            >
+              {!keyData ? item.label : item[keyData]}
             </div>
           ))}
         </div>

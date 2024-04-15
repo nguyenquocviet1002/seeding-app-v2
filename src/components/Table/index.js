@@ -37,7 +37,6 @@ const Table = (props) => {
   return (
     <DataTable
       pagination
-      paginationServer
       paginationComponentOptions={paginationComponentOptions}
       paginationRowsPerPageOptions={[10, 20, 50]}
       noDataComponent={componentEmpty}

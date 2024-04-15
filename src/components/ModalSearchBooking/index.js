@@ -27,7 +27,7 @@ const ModalSearchBooking = ({ isShow, hide, element, event }) => {
     queryKey: ['get-all-user', token],
     queryFn: () => getAllUserFn({ token: token, code_user: '' }),
     onSuccess: (data) => {
-      setAllUser(removeFirstItem(data.data.data));
+      setAllUser(filterIsActive(removeFirstItem(data.data.data)));
     },
   });
 
@@ -54,7 +54,7 @@ const ModalSearchBooking = ({ isShow, hide, element, event }) => {
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D');
-    const userFilter = removeFirstItem(queryGetAllUser.data.data.data).filter((item) => {
+    const userFilter = filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)).filter((item) => {
       const nameUserNonSpace = item.name.toLowerCase().replace(/\s/g, '');
       const nameUserNonBind = nameUserNonSpace
         .normalize('NFD')
@@ -77,8 +77,12 @@ const ModalSearchBooking = ({ isShow, hide, element, event }) => {
   const closeSelect = useCallback(() => {
     setValue('');
     setIsUser(false);
-    setAllUser(removeFirstItem(queryGetAllUser.data.data.data));
+    setAllUser(filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)));
   }, [queryGetAllUser]);
+
+  const filterIsActive = (data) => {
+    return data.filter((item) => item.active_user === true);
+  };
 
   const refUser = useRef(null);
   useEffect(() => {
@@ -150,7 +154,7 @@ const ModalSearchBooking = ({ isShow, hide, element, event }) => {
                           <button
                             onClick={() => {
                               setValue('');
-                              setAllUser(removeFirstItem(queryGetAllUser.data.data.data));
+                              setAllUser(filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)));
                             }}
                           >
                             &#10005;

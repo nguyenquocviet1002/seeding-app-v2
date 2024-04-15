@@ -1,0 +1,11 @@
+.group {
+  border-bottom: 1px solid #cccccc77;
+  display: flex;
+  margin-bottom: 10px;
+  padding-bottom: 10px;
+  gap: 5px;
+}
+.item {
+  flex: 1 auto;
+  max-width: 33.3%;
+}

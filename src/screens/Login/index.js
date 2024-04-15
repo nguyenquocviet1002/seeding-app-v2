@@ -1,21 +1,23 @@
 import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getTokenFn } from '@/api/auth';
 import { tokenName } from '@/utils/config';
+import { getTokenFn } from '@/api/auth';
 import Loading from '@/components/Loading';
 import loginStyles from './Login.module.scss';
-import { useEffect } from 'react';
 
 const ScreenLogin = ({ showToast }) => {
   const navigate = useNavigate();
-  const initialUser = {
+  const [token, setToken] = useLocalStorage(tokenName, null);
+
+  const initial = {
     user: '',
     password: '',
   };
-  const [token, setToken] = useLocalStorage(tokenName, null);
-  const [user, setUser] = useState(initialUser);
+
+  const [user, setUser] = useState(initial);
   const [message, setMessage] = useState('');
   const [isTypeP, setIsTypeP] = useState(false);
 
@@ -32,7 +34,7 @@ const ScreenLogin = ({ showToast }) => {
         setMessage('Tài khoản đã bị vô hiệu hóa');
       } else {
         setToken(data.data.access_token);
-        setUser(initialUser);
+        setUser(initial);
         showToast('Đăng nhập thành công', 'success');
         setTimeout(() => {
           navigate('/form');
@@ -47,9 +49,14 @@ const ScreenLogin = ({ showToast }) => {
     }
   });
 
+  if (token) {
+    return <Navigate to="/" />;
+  }
+
   const handleChange = (name) => (event) => {
     setUser((prev) => ({ ...prev, [name]: event.target.value }));
   };
+
   const handleSubmit = () => {
     if (!user.user || !user.password) {
       setMessage('Số điện thoại và mật khẩu không được để trống');
@@ -57,9 +64,6 @@ const ScreenLogin = ({ showToast }) => {
       queryLogin.refetch();
     }
   };
-  if (token) {
-    return <Navigate to="/" />;
-  }
 
   return (
     <>

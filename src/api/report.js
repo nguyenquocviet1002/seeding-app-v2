@@ -6,7 +6,7 @@ export const getBrandFn = async (token) => {
 
 export const getReportBookingFn = async (body) => {
   return await http.get(
-    `/get-report-booking?token=${body.token}&start_date=${body.start_date}&end_date=${body.end_date}&user_seeding=${body.user}`,
+    `/get-report-booking?token=${body.token}&start_date=${body.start_date}&end_date=${body.end_date}&user_seeding=${body.user_seeding}`,
   );
 };
 

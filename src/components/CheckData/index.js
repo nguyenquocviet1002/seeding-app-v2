@@ -1,19 +1,23 @@
 import { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useNavigate } from 'react-router-dom';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
+import { useModal } from '@/hooks/useModal';
 import { tokenName } from '@/utils/config';
 import { getCheckDataFn } from '@/api/report';
 import dayjs from 'dayjs';
 import Button from '../Button';
 import Table from '../Table';
 import Loading from '../Loading';
+import ModalTotalPrice from '../ModalTotalPrice';
+import ModalService from '../ModalService';
 import checkDataStyles from './CheckData.module.scss';
 
 const CheckData = () => {
-  const [token] = useLocalStorage(tokenName, null);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const [token] = useLocalStorage(tokenName, null);
+  const { isShowing, cpn, toggle } = useModal();
 
   const initial = {
     token: token,
@@ -27,6 +31,8 @@ const CheckData = () => {
   const [filter, setFilter] = useState();
   const [valueInput, setValueInput] = useState('');
   const [valueDate, setValueDate] = useState('');
+  const [dataTotalPrice, setDataTotalPrice] = useState([]);
+  const [dataService, setDataService] = useState([]);
 
   const columns = [
     {
@@ -47,11 +53,37 @@ const CheckData = () => {
     },
     {
       name: 'Doanh số',
-      cell: (row) => (row.doanh_so.length > 0 ? <Button classItem="outline">Xem thêm</Button> : 'Trống'),
+      cell: (row) =>
+        row.doanh_so.length > 0 ? (
+          <Button
+            classItem="outline"
+            event={() => {
+              setDataTotalPrice(row.doanh_so);
+              toggle('ModalTotalPrice');
+            }}
+          >
+            Xem thêm
+          </Button>
+        ) : (
+          'Trống'
+        ),
     },
     {
       name: 'Dịch vụ',
-      cell: (row) => (row.dich_vu.length > 0 ? <Button classItem="outline">Xem thêm</Button> : 'Trống'),
+      cell: (row) =>
+        row.dich_vu.length > 0 ? (
+          <Button
+            classItem="outline"
+            event={() => {
+              setDataService(row.dich_vu);
+              toggle('ModalService');
+            }}
+          >
+            Xem thêm
+          </Button>
+        ) : (
+          'Trống'
+        ),
     },
   ];
 
@@ -97,11 +129,6 @@ const CheckData = () => {
           <div className={checkDataStyles['top']}>
             <div className={checkDataStyles['title']}>Danh Sách Dữ Liệu Trùng</div>
             <div className={checkDataStyles['action']}>
-              {filter && (
-                <Button classItem="danger" event={removeFilter}>
-                  Xóa bộ lọc
-                </Button>
-              )}
               <input
                 type="text"
                 className={checkDataStyles['inputSearch']}
@@ -118,6 +145,11 @@ const CheckData = () => {
               <Button classItem="primary" event={submitSearch}>
                 Tìm kiếm
               </Button>
+              {filter && (
+                <Button classItem="danger" event={removeFilter}>
+                  Xóa bộ lọc
+                </Button>
+              )}
             </div>
           </div>
           {filter && (
@@ -141,6 +173,8 @@ const CheckData = () => {
           />
         </div>
       </div>
+      <ModalTotalPrice isShow={isShowing} hide={toggle} element={cpn} data={dataTotalPrice} />
+      <ModalService isShow={isShowing} hide={toggle} element={cpn} data={dataService} />
       {queryCheckData.isLoading && (
         <>
           <Loading />

@@ -13,9 +13,9 @@ const ModalChangePassword = ({ isShow, hide, element, toast }) => {
   // eslint-disable-next-line no-unused-vars
   const [token, setToken] = useLocalStorage(tokenName, null);
   const initialPassword = {
+    token: token,
     password: '',
     confirmPassword: '',
-    token: token,
   };
   const [password, setPassword] = useState(initialPassword);
   const [message, setMessage] = useState('');

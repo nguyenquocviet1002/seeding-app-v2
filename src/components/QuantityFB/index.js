@@ -40,6 +40,7 @@ const QuantityFB = () => {
   const [allUser, setAllUser] = useState([]);
   const [typeLabel, setTypeLabel] = useState({ label: 'Nhân viên', code: '' });
   const [bodyForm, setBodyForm] = useState({
+    token: token,
     brand_id: '',
     type: 'seeding',
     limit: '',
@@ -52,7 +53,6 @@ const QuantityFB = () => {
     start_date: initialDate.firstDay,
     end_date: initialDate.lastDay,
     user_seeding: typeLabel.code,
-    token: token,
   });
   const [bodyBooking, setBodyBooking] = useState({
     token: token,

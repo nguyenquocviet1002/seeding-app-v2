@@ -17,6 +17,7 @@
     width: 100%;
     max-height: 100%;
     position: relative;
+    margin: 0 15px;
   }
   .large {
     max-width: 40rem;
@@ -72,5 +73,27 @@
     z-index: 40;
     inset: 0;
     position: fixed;
+  }
+  @media (max-width: 767px) {
+    &__head {
+      padding: 0.8rem 1rem;
+    }
+    &__around {
+      padding-left: 1rem;
+      padding-right: 1rem;
+    }
+  }
+  @media (max-width: 430px) {
+    &__close {
+      right: 0.2rem;
+      top: 0.65rem;
+    }
+    &__head {
+      padding: 0.8rem 0.7rem;
+    }
+    &__around {
+      padding-left: 0.7rem;
+      padding-right: 0.7rem;
+    }
   }
 }

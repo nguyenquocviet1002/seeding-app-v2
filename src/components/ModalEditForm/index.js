@@ -12,16 +12,15 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
   const [token] = useLocalStorage(tokenName, null);
   const [dataDetail, setDataDetail] = useState({
     token: token,
-    type: 'seeding',
-    company_id: '',
-    name_fb: '',
-    link_fb: '',
-    phone: '',
-    service: '',
     name: '',
+    phone: '',
+    link_fb: '',
+    name_fb: '',
+    service: '',
     note: '',
     script: '',
     interactive_proof: '',
+    company_id: '',
   });
   const [company, setCompany] = useState([]);
   const [value, setValue] = useState('');

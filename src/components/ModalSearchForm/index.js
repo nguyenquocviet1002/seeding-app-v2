@@ -26,7 +26,8 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
   const [form, setForm] = useState(initial);
   const [company, setCompany] = useState([]);
   const [allUser, setAllUser] = useState([]);
-  const [value, setValue] = useState('');
+  const [inputCompany, setInputCompany] = useState('');
+  const [inputUser, setInputUser] = useState('');
   const [isCompany, setIsCompany] = useState(false);
   const [isUser, setIsUser] = useState(false);
 
@@ -42,7 +43,7 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
     queryKey: ['get-all-user', token],
     queryFn: () => getAllUserFn({ token: token, code_user: '' }),
     onSuccess: (data) => {
-      setAllUser(removeFirstItem(data.data.data));
+      setAllUser(filterIsActive(removeFirstItem(data.data.data)));
     },
   });
 
@@ -62,7 +63,6 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
 
   const handelValue = (e, type) => {
     const valueTarget = e.target.value;
-    setValue(valueTarget);
     const valueNonSpace = valueTarget.toLowerCase().replace(/\s/g, '');
     const valueNonBind = valueNonSpace
       .normalize('NFD')
@@ -70,6 +70,7 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D');
     if (type === 'company') {
+      setInputCompany(valueTarget);
       const companyFilter = queryGetCompany.data.data.data.filter((item) => {
         const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
         const nameCompanyNonBind = nameCompanyNonSpace
@@ -82,7 +83,8 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
       setCompany(companyFilter);
     }
     if (type === 'user') {
-      const userFilter = removeFirstItem(queryGetAllUser.data.data.data).filter((item) => {
+      setInputUser(valueTarget);
+      const userFilter = filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)).filter((item) => {
         const nameUserNonSpace = item.name.toLowerCase().replace(/\s/g, '');
         const nameUserNonBind = nameUserNonSpace
           .normalize('NFD')
@@ -114,18 +116,23 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
 
   const closeSelect = useCallback(
     (type) => {
-      setValue('');
       if (type === 'company') {
+        setInputCompany('');
         setIsCompany(false);
         setCompany(queryGetCompany.data.data.data);
       }
       if (type === 'user') {
+        setInputUser('');
         setIsUser(false);
-        setAllUser(removeFirstItem(queryGetAllUser.data.data.data));
+        setAllUser(filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)));
       }
     },
     [queryGetCompany, queryGetAllUser],
   );
+
+  const filterIsActive = (data) => {
+    return data.filter((item) => item.active_user === true);
+  };
 
   const refCompany = useRef(null);
   const refUser = useRef(null);
@@ -203,14 +210,14 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
                     <div className={modalSearchForm['filter']}>
                       <input
                         type="text"
-                        value={value}
+                        value={inputCompany}
                         placeholder="Tìm kiếm chi nhánh"
                         onChange={(e) => handelValue(e, 'company')}
                       />
-                      {value && (
+                      {inputCompany && (
                         <button
                           onClick={() => {
-                            setValue('');
+                            setInputCompany('');
                             setCompany(queryGetCompany.data.data.data);
                           }}
                         >
@@ -252,15 +259,15 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
                       <div className={modalSearchForm['filter']}>
                         <input
                           type="text"
-                          value={value}
+                          value={inputUser}
                           placeholder="Tìm kiếm nhân viên"
                           onChange={(e) => handelValue(e, 'user')}
                         />
-                        {value && (
+                        {inputUser && (
                           <button
                             onClick={() => {
-                              setValue('');
-                              setAllUser(removeFirstItem(queryGetAllUser.data.data.data));
+                              setInputUser('');
+                              setAllUser(filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)));
                             }}
                           >
                             &#10005;

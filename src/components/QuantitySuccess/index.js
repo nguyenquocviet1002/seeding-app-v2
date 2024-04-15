@@ -14,11 +14,19 @@ import quantitySuccessStyles from './QuantitySuccess.module.scss';
 import SelectUser from '../SelectUser';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getDaysOfMonth, getDaysOfWeek, removeFirstItem, removeLastItem, tokenName } from '@/utils/config';
+import {
+  getDaysOfMonth,
+  getDaysOfWeek,
+  getDaysOfYear,
+  removeFirstItem,
+  removeLastItem,
+  tokenName,
+} from '@/utils/config';
 import { getAllUserFn } from '@/api/user';
-import { getReportBookingFn, getReportFn } from '@/api/report';
-import { customerSuccess, successDate, successWeek } from '@/utils/quantitySuccess';
+import { getBrandFn, getReportBookingFn, getReportFn } from '@/api/report';
+import { customerSuccess, successDate, successMonth, successWeek } from '@/utils/quantitySuccess';
 import Loading from '../Loading';
+import Select from '../Select';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 const options = {
@@ -47,11 +55,14 @@ const QuantitySuccess = () => {
   const [typeLabel, setTypeLabel] = useState({ label: 'Nhân viên', code: '' });
   const [data, setData] = useState();
   const [table, setTable] = useState();
+  const [valueFilter, setValueFilter] = useState('');
+  const [typeLabel2, setTypeLabel2] = useState({ label: 'Thương hiệu', code: '' });
+
   const [bodyReportBooking, setBodyReportBooking] = useState({
     token: token,
     start_date: initialDate.firstDay,
     end_date: initialDate.lastDay,
-    user: typeLabel.code,
+    user_seeding: typeLabel.code,
   });
   const [bodyReport, setBodyReport] = useState({
     token: token,
@@ -83,6 +94,11 @@ const QuantitySuccess = () => {
     queryFn: () => getReportFn(bodyReport),
   });
 
+  const queryBrand = useQuery({
+    queryKey: ['get-brand'],
+    queryFn: () => getBrandFn(token),
+  });
+
   useEffect(() => {
     try {
       if (type === 'week') {
@@ -109,6 +125,29 @@ const QuantitySuccess = () => {
           setTable(table.so_luong);
         }
       }
+      if (type === 'year') {
+        if (queryReportBooking.isSuccess && queryReport.isSuccess) {
+          const date = getDaysOfYear();
+          setBodyReportBooking((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+
+          const data = successMonth(removeLastItem(queryReportBooking.data.data.data), date.firstDay, date.lastDay);
+          const table = customerSuccess(removeLastItem(queryReport.data.data.data));
+          setData(data);
+          setTable(table.so_luong);
+        }
+      }
+      if (type === 'date') {
+        if (queryReportBooking.isSuccess && queryReport.isSuccess) {
+          setBodyReportBooking((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
+          setBodyReport((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
+
+          const data = successDate(removeLastItem(queryReportBooking.data.data.data));
+          const table = customerSuccess(removeLastItem(queryReport.data.data.data));
+          setData(data);
+          setTable(table.so_luong);
+        }
+      }
     } catch (error) {
       console.log(error);
     }
@@ -120,6 +159,7 @@ const QuantitySuccess = () => {
     queryReportBooking.data,
     queryReportBooking.isSuccess,
     type,
+    dateInput,
   ]);
 
   const handleActive = (type) => {
@@ -132,6 +172,37 @@ const QuantitySuccess = () => {
 
   const setUser = (e) => {
     setTypeLabel({ label: e.target.textContent, value: e.target.id });
+    setBodyReportBooking((prev) => ({ ...prev, user: e.target.id }));
+    setBodyReport((prev) => ({ ...prev, user_seeding: e.target.id }));
+  };
+
+  const setLable = (e) => {
+    setTypeLabel2({ label: e.target.textContent, value: e.target.id });
+    setBodyReport((prev) => ({ ...prev, brand_id: e.target.id }));
+  };
+
+  const removeAccents = (str) => {
+    const string = str || '';
+    return string
+      .normalize('NFD')
+      .toLowerCase()
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'D');
+  };
+
+  const searchByName = (e) => {
+    if (e.target.value) {
+      setValueFilter(e.target.value);
+      const result = queryReport.data.data.data.filter(
+        (item) => removeAccents(item.group_service).search(removeAccents(e.target.value)) !== -1,
+      );
+      setTable(result.sort((a, b) => b.so_luong - a.so_luong));
+    } else {
+      setValueFilter('');
+      const table = customerSuccess(removeLastItem(queryReport.data.data.data));
+      setTable(table.so_luong);
+    }
   };
 
   return (
@@ -217,6 +288,28 @@ const QuantitySuccess = () => {
       <div className={quantitySuccessStyles['main']}>
         <div style={{ width: '50%' }}>{data && <Line options={options} data={data} />}</div>
         <div style={{ width: '50%' }}>
+          <input type="text" value={valueFilter} onChange={searchByName} />
+          {valueFilter && (
+            <button
+              onClick={() => {
+                setValueFilter('');
+                const table = customerSuccess(removeLastItem(queryReport.data.data.data));
+                setTable(table.so_luong);
+              }}
+            >
+              &#10005;
+            </button>
+          )}
+          {queryBrand.isSuccess && (
+            <Select
+              labelIndex={typeLabel2}
+              data={queryBrand.data.data.data}
+              eventClick={setLable}
+              keyData="name"
+              code="code"
+              all={true}
+            />
+          )}
           {table && (
             <table>
               <thead>

@@ -28,9 +28,7 @@ const Modal = ({ title, hide, children, size }) => {
             </button>
             <h4 className={modalStyle['modal__head']}>{title}</h4>
             <div className={modalStyle['modal__line']}></div>
-            <div className={modalStyle['modal__around']}>
-              <div className={modalStyle['modal__body']}>{children}</div>
-            </div>
+            <div className={modalStyle['modal__around']}>{children}</div>
           </div>
         </div>
       </div>

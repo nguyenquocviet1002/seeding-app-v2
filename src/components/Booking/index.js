@@ -16,14 +16,11 @@ import bookingStyles from './Booking.module.scss';
 
 const Booking = () => {
   const [token] = useLocalStorage(tokenName, null);
-  const [label] = useState([
-    { label: 'Booking', value: 'opportunity' },
-    { label: 'Lead', value: 'lead' },
-  ]);
-  const [typeLabel, setTypeLabel] = useState(label[0]);
+  const { isShowing, cpn, toggle } = useModal();
+
   const initial = {
     token: token,
-    type: typeLabel.value,
+    type: 'opportunity',
     check: 'seeding',
     limit: 10,
     offset: 0,
@@ -34,12 +31,16 @@ const Booking = () => {
     code: '',
     user_seeding: '',
   };
+  const label = [
+    { label: 'Booking', value: 'opportunity' },
+    { label: 'Lead', value: 'lead' },
+  ];
+
   const [body, setBody] = useState(initial);
   const [totalRows, setTotalRows] = useState(0);
+  const [typeLabel, setTypeLabel] = useState({ label: 'Booking', value: 'opportunity' });
   const [itemDetail, setItemDetail] = useState();
   const [filter, setFilter] = useState();
-
-  const { isShowing, cpn, toggle } = useModal();
 
   const queryGetBooking = useQuery({
     queryKey: ['get-booking', body],
@@ -189,6 +190,7 @@ const Booking = () => {
                 ? removeLastItem(removeFirstItem(queryGetBooking.data.data.data))
                 : []
             }
+            paginationServer
             paginationTotalRows={totalRows}
             onChangeRowsPerPage={handlePerRowsChange}
             onChangePage={handlePageChange}

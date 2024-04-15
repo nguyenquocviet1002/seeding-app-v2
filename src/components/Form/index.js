@@ -18,8 +18,13 @@ import Loading from '../Loading';
 import formStyles from './Form.module.scss';
 
 const Form = () => {
+  const queryClient = useQueryClient();
+  const showToast = useOutletContext();
   const [token] = useLocalStorage(tokenName, null);
+  const { isShowing, cpn, toggle } = useModal();
+
   const initial = {
+    token: token,
     brand_id: '',
     type: 'seeding',
     limit: 10,
@@ -32,19 +37,14 @@ const Form = () => {
     start_date: '',
     end_date: '',
     user_seeding: '',
-    token: token,
   };
+
   const [body, setBody] = useState(initial);
   const [totalRows, setTotalRows] = useState(0);
   const [itemDetail, setItemDetail] = useState();
   const [itemRemove, setItemRemove] = useState({ token: token, code_form: '' });
   const [filter, setFilter] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const { isShowing, cpn, toggle } = useModal();
-
-  const showToast = useOutletContext();
-
-  const queryClient = useQueryClient();
 
   const queryGetForm = useQuery({
     queryKey: ['get-form', body],
@@ -219,6 +219,7 @@ const Form = () => {
                 ? removeFirstItem(queryGetForm.data.data.data)
                 : []
             }
+            paginationServer
             paginationTotalRows={totalRows}
             onChangeRowsPerPage={handlePerRowsChange}
             onChangePage={handlePageChange}

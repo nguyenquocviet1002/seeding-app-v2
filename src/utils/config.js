@@ -27,7 +27,11 @@ export function removeLastItem(data) {
 }
 
 export function formatMoney(value) {
-  return Number(value).toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+  if (value) {
+    return Number(value).toLocaleString('it-IT', { style: 'currency', currency: 'VND' });
+  } else {
+    return '0 VND';
+  }
 }
 
 export function getDaysOfWeek() {

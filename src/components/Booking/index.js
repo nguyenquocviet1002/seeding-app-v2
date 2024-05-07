@@ -4,7 +4,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useModal } from '@/hooks/useModal';
 import { removeFirstItem, removeLastItem, tokenName } from '@/utils/config';
 import { getBookingFn } from '@/api/booking';
-import { getUserFn } from '@/api/user';
+import { getNameFn } from '@/api/user';
 import dayjs from 'dayjs';
 import Button from '../Button';
 import Select from '../Select';
@@ -50,9 +50,9 @@ const Booking = () => {
     },
   });
 
-  const queryGetUser = useQuery({
-    queryKey: ['get-user', token],
-    queryFn: () => getUserFn(token),
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
   });
 
   const columns = [
@@ -93,7 +93,7 @@ const Booking = () => {
       name: 'Nhân viên',
       selector: (row) => row.name_user_seeding,
       sortable: true,
-      omit: queryGetUser.isSuccess && queryGetUser.data.data.data.rule === 'user' ? true : false,
+      omit: queryGetName.isSuccess && queryGetName.data.data.data.rule === 'user' ? true : false,
     },
     {
       name: 'Xem thêm',

@@ -11,6 +11,7 @@ import ToastList from './components/ToastList/ToastList';
 import QuantityFB from './components/QuantityFB';
 import QuantitySuccess from './components/QuantitySuccess';
 import CheckData from './components/CheckData';
+import Staff from './components/Staff';
 
 function App() {
   const [token] = useLocalStorage(tokenName, null);
@@ -26,6 +27,7 @@ function App() {
           <Route path="lead-booking" element={<Booking />} />
           <Route path="quantity-fb" element={<QuantityFB />} />
           <Route path="quantity-success" element={<QuantitySuccess />} />
+          <Route path="staff" element={<Staff />} />
           <Route path="check-data" element={<CheckData />} />
         </Route>
         <Route path="*" element={<ScreenPageNotFound />} />

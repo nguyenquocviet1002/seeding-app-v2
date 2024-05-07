@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { removeFirstItem, tokenName } from '@/utils/config';
-import { getAllUserFn, getUserFn } from '@/api/user';
+import { getUserFn, getNameFn } from '@/api/user';
 import Modal from '../Modal';
 import Button from '../Button';
 import modalSearchBooking from './ModalSearchBooking.module.scss';
@@ -25,15 +25,15 @@ const ModalSearchBooking = ({ isShow, hide, element, event }) => {
 
   const queryGetAllUser = useQuery({
     queryKey: ['get-all-user', token],
-    queryFn: () => getAllUserFn({ token: token, code_user: '' }),
+    queryFn: () => getUserFn({ token: token, code_user: '' }),
     onSuccess: (data) => {
       setAllUser(filterIsActive(removeFirstItem(data.data.data)));
     },
   });
 
-  const queryGetUser = useQuery({
-    queryKey: ['get-user', token],
-    queryFn: () => getUserFn(token),
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
   });
 
   const handleChange = (name) => (event) => {
@@ -132,7 +132,7 @@ const ModalSearchBooking = ({ isShow, hide, element, event }) => {
                   onChange={handleChange('code')}
                 />
               </div>
-              {queryGetUser.isSuccess && queryGetUser.data.data.data.rule === 'admin' && (
+              {queryGetName.isSuccess && queryGetName.data.data.data.rule === 'admin' && (
                 <div className={modalSearchBooking['control']} ref={refUser}>
                   <label className={modalSearchBooking['label']}>Nhân viên</label>
                   <p

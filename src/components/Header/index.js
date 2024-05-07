@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useModal } from '@/hooks/useModal';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { getUserFn } from '@/api/user';
+import { getNameFn } from '@/api/user';
 import { tokenName } from '@/utils/config';
 import Button from '../Button';
 import ModalChangePassword from '../ModalChangePassword';
@@ -15,9 +15,9 @@ const Header = ({ showToast }) => {
   const navigate = useNavigate();
   const { isShowing, cpn, toggle } = useModal();
 
-  const queryGetUser = useQuery({
-    queryKey: ['get-user', token],
-    queryFn: () => getUserFn(token),
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
     onSuccess: (data) => {
       if (data.data.message === 'token seems to have expired or invalid') {
         navigate('/login');
@@ -48,7 +48,7 @@ const Header = ({ showToast }) => {
               </div>
               <div className={headerStyles['user']}>
                 <p className={headerStyles['userName']}>
-                  {queryGetUser.isSuccess && queryGetUser.data.data.data.username}
+                  {queryGetName.isSuccess && queryGetName.data.data.data.username}
                 </p>
                 <div className={headerStyles['userAvt']} onClick={() => setIsDropdown(!isDropdown)}>
                   <img src={`${process.env.PUBLIC_URL}/images/profile.png`} alt="" />

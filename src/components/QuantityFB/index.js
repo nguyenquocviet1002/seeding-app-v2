@@ -16,7 +16,7 @@ import { getFormFn } from '@/api/form';
 import { getBookingFn } from '@/api/booking';
 import { quantityDate, quantityWeek, quantityWeekForBrand, quantityYear } from '@/utils/quantityFB';
 import Loading from '../Loading';
-import { getAllUserFn } from '@/api/user';
+import { getUserFn } from '@/api/user';
 import SelectUser from '../SelectUser';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -85,7 +85,7 @@ const QuantityFB = () => {
   });
   useQuery({
     queryKey: ['get-all-user', token],
-    queryFn: () => getAllUserFn({ token: token, code_user: '' }),
+    queryFn: () => getUserFn({ token: token, code_user: '' }),
     onSuccess: (data) => {
       setAllUser(removeFirstItem(data.data.data));
     },

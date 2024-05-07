@@ -22,7 +22,7 @@ import {
   removeLastItem,
   tokenName,
 } from '@/utils/config';
-import { getAllUserFn } from '@/api/user';
+import { getUserFn } from '@/api/user';
 import { getBrandFn, getReportBookingFn, getReportFn } from '@/api/report';
 import { customerSuccess, successDate, successMonth, successWeek } from '@/utils/quantitySuccess';
 import Loading from '../Loading';
@@ -78,7 +78,7 @@ const QuantitySuccess = () => {
 
   useQuery({
     queryKey: ['get-all-user', token],
-    queryFn: () => getAllUserFn({ token: token, code_user: '' }),
+    queryFn: () => getUserFn({ token: token, code_user: '' }),
     onSuccess: (data) => {
       setAllUser(removeFirstItem(data.data.data));
     },

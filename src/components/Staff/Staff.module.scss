@@ -1,0 +1,53 @@
+.main {
+  background-color: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 0.625rem;
+  overflow: hidden;
+  position: relative;
+}
+.head {
+  border-bottom: 1px solid #e6e6e6;
+  padding: 1.5rem 1.25rem 1.25rem;
+  position: relative;
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+}
+.title {
+  font-size: 18px;
+  font-weight: 600;
+}
+.table {
+  padding: 1.125rem;
+}
+.status {
+  background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+  background-position: right 0.1rem center;
+  background-repeat: no-repeat;
+  background-size: 1.5em 1.5em;
+  padding-right: 1.5rem;
+  padding-left: 5px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-radius: 0.25rem;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  user-select: none;
+  appearance: none;
+  border: none;
+  background-color: transparent;
+  outline: none;
+  width: 100%;
+  &.active {
+    background-color: #bbe6e3;
+    color: #3a9b94;
+  }
+  &.unactive {
+    background-color: #ffdede;
+    color: #ff5e5e;
+  }
+  option {
+    background-color: #fff;
+    color: #000;
+  }
+}

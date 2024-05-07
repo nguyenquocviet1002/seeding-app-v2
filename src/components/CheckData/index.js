@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useModal } from '@/hooks/useModal';
 import { tokenName } from '@/utils/config';
-import { getCheckDataFn } from '@/api/report';
+import { getCheckSeedingFn } from '@/api/report';
 import dayjs from 'dayjs';
 import Button from '../Button';
 import Table from '../Table';
@@ -87,9 +87,9 @@ const CheckData = () => {
     },
   ];
 
-  const queryCheckData = useQuery({
-    queryKey: ['check-data', body],
-    queryFn: () => getCheckDataFn(body),
+  const queryCheckSeeding = useQuery({
+    queryKey: ['check-seeding', body],
+    queryFn: () => getCheckSeedingFn(body),
   });
 
   const handleChangeInput = (event) => {
@@ -169,13 +169,17 @@ const CheckData = () => {
         <div className={checkDataStyles['table']}>
           <Table
             columns={columns}
-            data={queryCheckData.isSuccess && queryCheckData.data.data.count > 0 ? queryCheckData.data.data.data : []}
+            data={
+              queryCheckSeeding.isSuccess && queryCheckSeeding.data.data.count > 0
+                ? queryCheckSeeding.data.data.data
+                : []
+            }
           />
         </div>
       </div>
       <ModalTotalPrice isShow={isShowing} hide={toggle} element={cpn} data={dataTotalPrice} />
       <ModalService isShow={isShowing} hide={toggle} element={cpn} data={dataService} />
-      {queryCheckData.isLoading && (
+      {queryCheckSeeding.isLoading && (
         <>
           <Loading />
           <button

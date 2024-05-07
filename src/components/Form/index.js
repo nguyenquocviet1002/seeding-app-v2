@@ -5,7 +5,7 @@ import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { useModal } from '@/hooks/useModal';
 import { removeFirstItem, tokenName } from '@/utils/config';
 import { getFormFn, removeFormFn } from '@/api/form';
-import { getUserFn } from '@/api/user';
+import { getNameFn } from '@/api/user';
 import dayjs from 'dayjs';
 import Button from '../Button';
 import Table from '../Table';
@@ -65,9 +65,9 @@ const Form = () => {
     },
   });
 
-  const queryGetUser = useQuery({
-    queryKey: ['get-user', token],
-    queryFn: () => getUserFn(token),
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
   });
 
   const columns = [
@@ -90,7 +90,7 @@ const Form = () => {
     {
       name: 'Nhân viên',
       selector: (row) => row.seeding_user_name,
-      omit: queryGetUser.isSuccess && queryGetUser.data.data.data.rule === 'user' ? true : false,
+      omit: queryGetName.isSuccess && queryGetName.data.data.data.rule === 'user' ? true : false,
     },
     {
       name: 'Ngày tạo',

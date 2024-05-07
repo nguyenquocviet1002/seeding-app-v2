@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { tokenName } from '@/utils/config';
-import { getUserFn } from '@/api/user';
+import { getNameFn } from '@/api/user';
 import dayjs from 'dayjs';
 import Modal from '../Modal';
 import modalDetailForm from './ModalDetailForm.module.scss';
@@ -10,9 +10,9 @@ import modalDetailForm from './ModalDetailForm.module.scss';
 const ModalDetailForm = ({ isShow, hide, element, data }) => {
   const [token] = useLocalStorage(tokenName, null);
 
-  const queryGetUser = useQuery({
-    queryKey: ['get-user', token],
-    queryFn: () => getUserFn(token),
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
   });
 
   return isShow && element === 'ModalDetailForm'
@@ -113,7 +113,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
                   disabled
                 />
               </div>
-              {queryGetUser.isSuccess && queryGetUser.data.data.data.rule === 'admin' && (
+              {queryGetName.isSuccess && queryGetName.data.data.data.rule === 'admin' && (
                 <div className={modalDetailForm['control']}>
                   <label className={modalDetailForm['label']}>Ticket Caresoft</label>
                   <a

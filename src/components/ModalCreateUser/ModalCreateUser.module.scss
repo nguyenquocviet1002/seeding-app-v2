@@ -1,0 +1,26 @@
+.group {
+  margin-bottom: 20px;
+}
+.label {
+  color: #111827;
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.input {
+  background-color: #f9fafb;
+  border: 1px solid #d1d5db;
+  color: #111827;
+  display: block;
+  outline: none;
+  overflow: hidden;
+  padding: 0.525rem;
+  width: 100%;
+}
+.submit {
+  width: fit-content;
+  margin-left: auto;
+}
+.error {
+  border-color: red;
+}

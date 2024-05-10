@@ -10,6 +10,7 @@ import staffStyles from './Staff.module.scss';
 import Loading from '../Loading';
 import ModalChangePasswordUser from '../ModalChangePasswordUser';
 import { useModal } from '@/hooks/useModal';
+import ModalCreateUser from '../ModalCreateUser';
 
 const Staff = () => {
   const [token] = useLocalStorage(tokenName, null);
@@ -111,7 +112,7 @@ const Staff = () => {
         <div className={staffStyles['head']}>
           <div className={staffStyles['title']}>Danh Sách Nhân Viên</div>
           <div className={staffStyles['cta']}>
-            <Button classItem="primary" icon="plus-solid.svg">
+            <Button classItem="primary" icon="plus-solid.svg" event={() => toggle('ModalCreateUser')}>
               Thêm mới
             </Button>
           </div>
@@ -128,6 +129,7 @@ const Staff = () => {
         </div>
       </div>
       <ModalChangePasswordUser isShow={isShowing} hide={toggle} element={cpn} toast={showToast} user={user} />
+      <ModalCreateUser isShow={isShowing} hide={toggle} element={cpn} toast={showToast} />
       {isLoading && <Loading />}
     </>
   );

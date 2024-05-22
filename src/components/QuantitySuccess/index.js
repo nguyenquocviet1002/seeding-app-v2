@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -18,6 +18,7 @@ import {
   getDaysOfMonth,
   getDaysOfWeek,
   getDaysOfYear,
+  removeAccents,
   removeFirstItem,
   removeLastItem,
   tokenName,
@@ -57,6 +58,7 @@ const QuantitySuccess = () => {
   const [table, setTable] = useState();
   const [valueFilter, setValueFilter] = useState('');
   const [typeLabel2, setTypeLabel2] = useState({ label: 'Thương hiệu', code: '' });
+  const [height, setHeight] = useState(0);
 
   const [bodyReportBooking, setBodyReportBooking] = useState({
     token: token,
@@ -98,6 +100,12 @@ const QuantitySuccess = () => {
     queryKey: ['get-brand'],
     queryFn: () => getBrandFn(token),
   });
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    setHeight(ref.current.clientHeight);
+  }, [data]);
 
   useEffect(() => {
     try {
@@ -176,19 +184,9 @@ const QuantitySuccess = () => {
     setBodyReport((prev) => ({ ...prev, user_seeding: e.target.id }));
   };
 
-  const setLable = (e) => {
+  const setLabel = (e) => {
     setTypeLabel2({ label: e.target.textContent, value: e.target.id });
     setBodyReport((prev) => ({ ...prev, brand_id: e.target.id }));
-  };
-
-  const removeAccents = (str) => {
-    const string = str || '';
-    return string
-      .normalize('NFD')
-      .toLowerCase()
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/đ/g, 'd')
-      .replace(/Đ/g, 'D');
   };
 
   const searchByName = (e) => {
@@ -209,7 +207,7 @@ const QuantitySuccess = () => {
     <>
       <div className={quantitySuccessStyles['top']}>
         <div className={quantitySuccessStyles['head']}>
-          <div className={quantitySuccessStyles['title']}>Số Lượng Form/Booking</div>
+          <div className={quantitySuccessStyles['title']}>Số Lượng Khách Hàng Thành Công</div>
           <div className={quantitySuccessStyles['action']}>
             <button
               className={`${quantitySuccessStyles['cta']} ${
@@ -286,53 +284,62 @@ const QuantitySuccess = () => {
         )}
       </div>
       <div className={quantitySuccessStyles['main']}>
-        <div style={{ width: '50%' }}>{data && <Line options={options} data={data} />}</div>
-        <div style={{ width: '50%' }}>
-          <input type="text" value={valueFilter} onChange={searchByName} />
-          {valueFilter && (
-            <button
-              onClick={() => {
-                setValueFilter('');
-                const table = customerSuccess(removeLastItem(queryReport.data.data.data));
-                setTable(table.so_luong);
-              }}
-            >
-              &#10005;
-            </button>
-          )}
-          {queryBrand.isSuccess && (
-            <Select
-              labelIndex={typeLabel2}
-              data={queryBrand.data.data.data}
-              eventClick={setLable}
-              keyData="name"
-              code="code"
-              all={true}
-            />
-          )}
+        <div className={quantitySuccessStyles['chart']} ref={ref}>
+          {data && <Line options={options} data={data} />}
+        </div>
+        <div className={quantitySuccessStyles['table']} style={{ height: height }}>
+          <div className={quantitySuccessStyles['filter']}>
+            <div className={quantitySuccessStyles['search']}>
+              <input type="text" value={valueFilter} onChange={searchByName} placeholder="Tìm theo tên dịch vụ..." />
+              {valueFilter && (
+                <button
+                  className={quantitySuccessStyles['reset']}
+                  onClick={() => {
+                    setValueFilter('');
+                    const table = customerSuccess(removeLastItem(queryReport.data.data.data));
+                    setTable(table.so_luong);
+                  }}
+                >
+                  &#10005;
+                </button>
+              )}
+            </div>
+            {queryBrand.isSuccess && (
+              <Select
+                labelIndex={typeLabel2}
+                data={queryBrand.data.data.data}
+                eventClick={setLabel}
+                keyData="name"
+                code="code"
+                all={true}
+              />
+            )}
+          </div>
           {table && (
-            <table>
-              <thead>
-                <tr>
-                  <th>STT</th>
-                  <th>Dịch vụ</th>
-                  <th>Số lượng</th>
-                </tr>
-              </thead>
-              <tbody>
-                {table.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{item.group_service}</td>
-                    <td>{item.so_luong}</td>
+            <div className={quantitySuccessStyles['box']}>
+              <table>
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Dịch vụ</th>
+                    <th>Số lượng</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {table.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.group_service}</td>
+                      <td>{item.so_luong}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>
-      {queryReport.isLoading && <Loading />}
+      {(queryReport.isLoading || queryReportBooking.isLoading) && <Loading />}
     </>
   );
 };

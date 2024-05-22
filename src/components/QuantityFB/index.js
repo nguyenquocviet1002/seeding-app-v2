@@ -296,7 +296,7 @@ const QuantityFB = () => {
           )}
         </div>
       </div>
-      {queryGetForm.isLoading && <Loading />}
+      {(queryGetForm.isLoading || queryGetBooking.isLoading) && <Loading />}
     </>
   );
 };

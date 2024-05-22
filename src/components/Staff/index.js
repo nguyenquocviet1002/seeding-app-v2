@@ -1,16 +1,18 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useOutletContext } from 'react-router-dom';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
-import { formatMoney, removeFirstItem, tokenName } from '@/utils/config';
+import { useModal } from '@/hooks/useModal';
+import { useDebounce } from '@/hooks/useDebounce';
+import { formatMoney, removeAccents, removeFirstItem, tokenName } from '@/utils/config';
 import { getUserFn, updateActiveUserFn } from '@/api/user';
 import Button from '../Button';
 import Table from '../Table';
-import staffStyles from './Staff.module.scss';
 import Loading from '../Loading';
 import ModalChangePasswordUser from '../ModalChangePasswordUser';
-import { useModal } from '@/hooks/useModal';
 import ModalCreateUser from '../ModalCreateUser';
+import ModalTarget from '../ModalTarget';
+import staffStyles from './Staff.module.scss';
 
 const Staff = () => {
   const [token] = useLocalStorage(tokenName, null);
@@ -19,17 +21,25 @@ const Staff = () => {
   const { isShowing, cpn, toggle } = useModal();
 
   const [infoActive, setInfoActive] = useState({ token: token, code_user: '', active: '' });
-  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState('');
+  const [listUser, setListUser] = useState([]);
+  const [listUserFilter, setListUserFilter] = useState('');
+  const [userTarget, setUserTarget] = useState({ name: '', code_user: '' });
+  const [valueSearch, setValueSearch] = useState('');
+
+  const debouncedValue = useDebounce(valueSearch, 500);
 
   const queryGetUser = useQuery({
     queryKey: ['get-user', token],
     queryFn: () => getUserFn({ token: token, code_user: '' }),
-    onSuccess: () => setIsLoading(false),
+    onSuccess: (data) => {
+      setListUser(removeFirstItem(data.data.data));
+      setListUserFilter(removeFirstItem(data.data.data));
+    },
   });
 
   const queryUpdateActiveUser = useQuery({
-    queryKey: ['update-active-user', token],
+    queryKey: ['update-active-user', infoActive],
     queryFn: () => updateActiveUserFn(infoActive),
     enabled: false,
     onSuccess: () => {
@@ -39,12 +49,26 @@ const Staff = () => {
   });
 
   const handleActiveUser = (isActive, codeUser) => {
-    setIsLoading(true);
     setInfoActive((prev) => ({ ...prev, code_user: codeUser, active: isActive }));
     setTimeout(() => {
       queryUpdateActiveUser.refetch();
     }, 0);
   };
+
+  const searchByName = useCallback(() => {
+    if (debouncedValue) {
+      const result = listUser.filter((item) => removeAccents(item.name).search(removeAccents(debouncedValue)) !== -1);
+      setListUserFilter(result);
+    } else {
+      setListUserFilter(listUser);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [debouncedValue]);
+
+  useEffect(() => {
+    searchByName();
+  }, [debouncedValue, searchByName]);
+
   const columns = [
     {
       name: 'Mã nhân viên',
@@ -53,6 +77,7 @@ const Staff = () => {
     {
       name: 'Họ và tên',
       selector: (row) => row.name,
+      grow: 1.5,
     },
     {
       name: 'Số điện thoại',
@@ -61,10 +86,12 @@ const Staff = () => {
     {
       name: 'Kết quả',
       selector: (row) => formatMoney(row.kpi_now),
+      grow: 1.5,
     },
     {
       name: 'Mục tiêu',
       selector: (row) => formatMoney(row.kpi_target),
+      grow: 1.5,
     },
     {
       name: 'Hoàn thành',
@@ -100,9 +127,39 @@ const Staff = () => {
               toggle('ModalChangePasswordUser');
             }}
           ></Button>
-          <Button classItem="danger" icon="ellipsis-vertical-solid.svg" size="small"></Button>
+          <Button
+            classItem="danger"
+            icon="ellipsis-vertical-solid.svg"
+            size="small"
+            event={() => {
+              setUserTarget({
+                name: row.name,
+                code_user: row.code_user,
+              });
+              toggle('ModalTarget');
+            }}
+          ></Button>
         </>
       ),
+      right: true,
+      conditionalCellStyles: [
+        {
+          when: (row) => !row.active_user,
+          style: {
+            filter: 'grayscale(1)',
+            pointerEvents: 'none',
+          },
+        },
+      ],
+    },
+  ];
+
+  const conditionalRowStyles = [
+    {
+      when: (row) => !row.active_user,
+      style: {
+        backgroundColor: 'rgb(238, 238, 238)',
+      },
     },
   ];
 
@@ -111,26 +168,29 @@ const Staff = () => {
       <div className={staffStyles['main']}>
         <div className={staffStyles['head']}>
           <div className={staffStyles['title']}>Danh Sách Nhân Viên</div>
-          <div className={staffStyles['cta']}>
-            <Button classItem="primary" icon="plus-solid.svg" event={() => toggle('ModalCreateUser')}>
-              Thêm mới
-            </Button>
+          <div className={staffStyles['right']}>
+            <input
+              type="text"
+              className={staffStyles['search']}
+              value={valueSearch}
+              placeholder="Tìm kiếm theo tên"
+              onChange={(e) => setValueSearch(e.target.value)}
+            />
+            <div className={staffStyles['cta']}>
+              <Button classItem="primary" icon="plus-solid.svg" event={() => toggle('ModalCreateUser')}>
+                Thêm mới
+              </Button>
+            </div>
           </div>
         </div>
         <div className={staffStyles['table']}>
-          <Table
-            columns={columns}
-            data={
-              queryGetUser.isSuccess && queryGetUser.data.data.count > 0
-                ? removeFirstItem(queryGetUser.data.data.data)
-                : []
-            }
-          />
+          <Table columns={columns} data={listUserFilter} conditionalRowStyles={conditionalRowStyles} />
         </div>
       </div>
       <ModalChangePasswordUser isShow={isShowing} hide={toggle} element={cpn} toast={showToast} user={user} />
       <ModalCreateUser isShow={isShowing} hide={toggle} element={cpn} toast={showToast} />
-      {isLoading && <Loading />}
+      <ModalTarget isShow={isShowing} hide={toggle} element={cpn} toast={showToast} user={userTarget} />
+      {(queryGetUser.isLoading || queryUpdateActiveUser.isFetching) && <Loading />}
     </>
   );
 };

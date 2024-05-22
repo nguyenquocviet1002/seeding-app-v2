@@ -45,12 +45,19 @@ const Form = () => {
   const [itemRemove, setItemRemove] = useState({ token: token, code_form: '' });
   const [filter, setFilter] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState({});
 
   const queryGetForm = useQuery({
     queryKey: ['get-form', body],
     queryFn: () => getFormFn(body),
     onSuccess: (data) => {
-      setTotalRows(data.data.data[0].count_no_limit);
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setTotalRows(data.data.data[0].count_no_limit);
+      }
     },
   });
 
@@ -68,6 +75,15 @@ const Form = () => {
   const queryGetName = useQuery({
     queryKey: ['get-name', token],
     queryFn: () => getNameFn(token),
+    onSuccess: (data) => {
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setUser(data.data.data);
+      }
+    },
   });
 
   const columns = [
@@ -90,7 +106,7 @@ const Form = () => {
     {
       name: 'Nhân viên',
       selector: (row) => row.seeding_user_name,
-      omit: queryGetName.isSuccess && queryGetName.data.data.data.rule === 'user' ? true : false,
+      omit: queryGetName.isSuccess && user.rule === 'user' ? true : false,
     },
     {
       name: 'Ngày tạo',

@@ -12,10 +12,7 @@ const ScreenLogin = ({ showToast }) => {
   const navigate = useNavigate();
   const [token, setToken] = useLocalStorage(tokenName, null);
 
-  const initial = {
-    user: '',
-    password: '',
-  };
+  const initial = { user: '', password: '' };
 
   const [user, setUser] = useState(initial);
   const [message, setMessage] = useState('');

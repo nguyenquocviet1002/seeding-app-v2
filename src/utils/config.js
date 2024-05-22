@@ -34,6 +34,32 @@ export function formatMoney(value) {
   }
 }
 
+export function numberWithCommas(x) {
+  return x.toString().replace(/\B(?<!\.\d*)(?=(\d{3})+(?!\d))/g, '.');
+}
+
+export function numberWithoutCommas(x) {
+  return x.toString().replace(/\./g, '');
+}
+
+export function sortDate(data) {
+  try {
+    return data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+  } catch (error) {
+    return [];
+  }
+}
+
+export function removeAccents(str) {
+  const string = str || '';
+  return string
+    .normalize('NFD')
+    .toLowerCase()
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D');
+}
+
 export function getDaysOfWeek() {
   try {
     const today = new Date();

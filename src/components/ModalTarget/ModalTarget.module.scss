@@ -1,0 +1,38 @@
+.add {
+  width: fit-content;
+  margin-left: auto;
+}
+.group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 5px 0;
+}
+.input {
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 0.375rem;
+  color: #6e6e6e;
+  display: block;
+  height: 2rem;
+  padding: 0.5rem;
+  width: 100%;
+  transition: all 0.15s ease-in-out;
+  &:focus,
+  &:active {
+    border-color: #452b90;
+  }
+}
+.control {
+  max-width: 50%;
+  width: 100%;
+  input {
+    @extend .input;
+  }
+}
+.ctas__add {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  justify-content: flex-end;
+}

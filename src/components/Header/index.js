@@ -1,28 +1,38 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useModal } from '@/hooks/useModal';
 import { useQuery } from '@tanstack/react-query';
+import { useModal } from '@/hooks/useModal';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { getNameFn } from '@/api/user';
 import { tokenName } from '@/utils/config';
+
 import Button from '../Button';
 import ModalChangePassword from '../ModalChangePassword';
+
 import headerStyles from './Header.module.scss';
 
 const Header = ({ showToast }) => {
-  const [isDropdown, setIsDropdown] = useState(false);
   const [token] = useLocalStorage(tokenName, null);
-  const navigate = useNavigate();
   const { isShowing, cpn, toggle } = useModal();
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({});
+  const [isDropdown, setIsDropdown] = useState(false);
 
   const queryGetName = useQuery({
     queryKey: ['get-name', token],
     queryFn: () => getNameFn(token),
     onSuccess: (data) => {
-      if (data.data.message === 'token seems to have expired or invalid') {
+      if (data.data.type === 'access_token') {
+        showToast(data.data.message, 'failure');
         navigate('/login');
-        showToast('Lỗi hệ thống! Vui lòng đăng nhập lại ', 'failure');
         localStorage.clear();
+      } else if (data.data.type === 'access_token_not_found') {
+        showToast(data.data.message, 'failure');
+        navigate('/login');
+        localStorage.clear();
+      } else {
+        setUser(data.data.data);
       }
     },
   });
@@ -31,6 +41,7 @@ const Header = ({ showToast }) => {
     localStorage.clear();
     navigate('/login');
   };
+
   return (
     <>
       <header className={headerStyles['header']}>
@@ -47,9 +58,7 @@ const Header = ({ showToast }) => {
                 </Button>
               </div>
               <div className={headerStyles['user']}>
-                <p className={headerStyles['userName']}>
-                  {queryGetName.isSuccess && queryGetName.data.data.data.username}
-                </p>
+                <p className={headerStyles['userName']}>{queryGetName.isSuccess && user.username}</p>
                 <div className={headerStyles['userAvt']} onClick={() => setIsDropdown(!isDropdown)}>
                   <img src={`${process.env.PUBLIC_URL}/images/profile.png`} alt="" />
                 </div>

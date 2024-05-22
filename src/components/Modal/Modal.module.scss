@@ -30,6 +30,7 @@
     background-color: #ffffff;
     border-radius: 0.5rem;
     position: relative;
+    animation: animatetop 0.5s;
   }
   &__close {
     color: #9ca3af;
@@ -95,5 +96,19 @@
       padding-left: 0.7rem;
       padding-right: 0.7rem;
     }
+  }
+}
+@keyframes animatetop {
+  0% {
+    top: -300px;
+    opacity: 0;
+  }
+  50% {
+    top: -150px;
+    opacity: 0;
+  }
+  100% {
+    top: 0;
+    opacity: 1;
   }
 }

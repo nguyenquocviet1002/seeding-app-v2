@@ -1,13 +1,11 @@
 import { MENU } from '@/utils/menu';
 import { Link, useNavigate } from 'react-router-dom';
+import { useModal } from '@/hooks/useModal';
 import ItemNav from '../ItemNav';
 import sidebarStyles from './Sidebar.module.scss';
 import ModalConfirm from '../ModalConfirm';
-import { useModal } from '@/hooks/useModal';
 
-const role = 'admin';
-
-const Sidebar = ({ isShow, toggleLayout, close }) => {
+const Sidebar = ({ isShow, toggleLayout, close, user }) => {
   const { isShowing, cpn, toggle } = useModal();
   const navigate = useNavigate();
 
@@ -23,7 +21,7 @@ const Sidebar = ({ isShow, toggleLayout, close }) => {
           </Link>
         </div>
         <nav className={sidebarStyles['nav']}>
-          {MENU(role).map((item, index) => (
+          {MENU(user.rule).map((item, index) => (
             <ItemNav
               key={index}
               href={item.link}
@@ -47,7 +45,7 @@ const Sidebar = ({ isShow, toggleLayout, close }) => {
           onClick={toggleLayout}
         ></div>
       </aside>
-      {isShow && <div className={sidebarStyles['backdrop']} onClick={toggle}></div>}
+      {isShow && <div className={sidebarStyles['backdrop']} onClick={toggleLayout}></div>}
       <ModalConfirm isShow={isShowing} hide={toggle} element={cpn} event={handleRedirect}>
         Bạn có muốn đi tới trang kiểm tra dữ liệu
       </ModalConfirm>

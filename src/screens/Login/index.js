@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Navigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
@@ -19,7 +18,7 @@ const ScreenLogin = ({ showToast }) => {
   const [isTypeP, setIsTypeP] = useState(false);
 
   const queryLogin = useQuery({
-    queryKey: ['login'],
+    queryKey: ['login', user],
     queryFn: () => getTokenFn(user),
     enabled: false,
     onSuccess: (data) => {
@@ -33,9 +32,7 @@ const ScreenLogin = ({ showToast }) => {
         setToken(data.data.access_token);
         setUser(initial);
         showToast('Đăng nhập thành công', 'success');
-        setTimeout(() => {
-          navigate('/form');
-        }, 1000);
+        navigate('/form');
       }
     },
   });

@@ -3,7 +3,7 @@ import Sidebar from '@/components/Sidebar';
 import Header from '@/components/Header';
 import defaultLayoutStyles from './DefaultLayout.module.scss';
 
-const DefaultLayout = ({ children, showToast }) => {
+const DefaultLayout = ({ children, showToast, user }) => {
   const [isShow, setIsShow] = useState(false);
   const toggleLayout = () => {
     setIsShow(!isShow);
@@ -14,8 +14,8 @@ const DefaultLayout = ({ children, showToast }) => {
 
   return (
     <>
-      <Header showToast={showToast} />
-      <Sidebar isShow={isShow} toggleLayout={toggleLayout} close={closeLayout} />
+      <Header showToast={showToast} user={user} />
+      <Sidebar isShow={isShow} toggleLayout={toggleLayout} close={closeLayout} user={user} />
 
       <main className={defaultLayoutStyles['main']}>
         <div className="container-full">

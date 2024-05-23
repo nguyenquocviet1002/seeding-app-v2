@@ -18,7 +18,7 @@ export const getReportFn = async (body) => {
 
 export const getReportBrandFn = async (body) => {
   return await http.get(
-    `get-report-brand?token=${body.token}&start_date=${body.start_date}&end_date=${body.end_date}&user_seeding=${body.user}`,
+    `get-report-brand?token=${body.token}&start_date=${body.start_date}&end_date=${body.end_date}&user_seeding=${body.user_seeding}`,
   );
 };
 

@@ -2,7 +2,7 @@ export const expenseCustomerSuccess = (data) => {
   return data.sort((a, b) => b.tong_tien - a.tong_tien);
 };
 
-export const expenseRevenueSuccessWeek = (data) => {
+export const expenseRevenueSuccessWeek = (data, type) => {
   const all = [];
   const kn = [];
   const pr = [];
@@ -17,7 +17,36 @@ export const expenseRevenueSuccessWeek = (data) => {
     hh.push(data[i].tong_tien_HN);
     date.push(`${new Date(data[i].date).getDate()}/${new Date(data[i].date).getMonth() + 1}`);
   }
-  return { all: all, kn: kn, pr: pr, da: da, hh: hh, labels: date };
+  return {
+    labels: type === 'week' ? ['Thứ 2', 'Thứ 3', 'Thứ 4', 'Thứ 5', 'Thứ 6', 'Thứ 7', 'Chủ nhật'] : date,
+    datasets: [
+      {
+        label: 'Tất cả',
+        data: all,
+        backgroundColor: '#ff6384',
+      },
+      {
+        label: 'Kangnam',
+        data: kn,
+        backgroundColor: '#ff9f40',
+      },
+      {
+        label: 'Đông Á',
+        data: da,
+        backgroundColor: '#4bc0c0',
+      },
+      {
+        label: 'Hồng Hà',
+        data: hh,
+        backgroundColor: '#9966ff',
+      },
+      {
+        label: 'Paris',
+        data: pr,
+        backgroundColor: '#36a2eb',
+      },
+    ],
+  };
 };
 
 export const expenseRevenueSuccessYear = (data, startDate, endDate) => {
@@ -28,7 +57,6 @@ export const expenseRevenueSuccessYear = (data, startDate, endDate) => {
     dateArray.push(i);
     labelArr.push('Tháng ' + i);
   }
-  console.log('labelArr: ', labelArr);
   const arrAll = [];
   const arrDA = [];
   const arrHH = [];
@@ -55,13 +83,34 @@ export const expenseRevenueSuccessYear = (data, startDate, endDate) => {
     arrKN.push(kn);
     arrPR.push(pr);
   });
-
   return {
     labels: labelArr,
-    all: arrAll,
-    da: arrDA,
-    hh: arrHH,
-    kn: arrKN,
-    pr: arrPR,
+    datasets: [
+      {
+        label: 'Tất cả',
+        data: arrAll,
+        backgroundColor: '#ff6384',
+      },
+      {
+        label: 'Kangnam',
+        data: arrKN,
+        backgroundColor: '#ff9f40',
+      },
+      {
+        label: 'Đông Á',
+        data: arrDA,
+        backgroundColor: '#4bc0c0',
+      },
+      {
+        label: 'Hồng Hà',
+        data: arrHH,
+        backgroundColor: '#9966ff',
+      },
+      {
+        label: 'Paris',
+        data: arrPR,
+        backgroundColor: '#36a2eb',
+      },
+    ],
   };
 };

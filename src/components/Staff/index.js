@@ -97,7 +97,7 @@ const Staff = () => {
       name: 'Hoàn thành',
       selector: (row) => {
         const kpiTarget = row.kpi_target === 0 ? row.kpi_now : row.kpi_target;
-        const percentSet = ((row.kpi_now / kpiTarget) * 100).toFixed();
+        const percentSet = ((row.kpi_now / kpiTarget) * 100).toFixed(1);
         return percentSet === 'NaN' ? '0%' : `${percentSet}%`;
       },
     },

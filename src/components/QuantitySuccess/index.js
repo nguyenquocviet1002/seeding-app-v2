@@ -23,7 +23,7 @@ import {
   removeLastItem,
   tokenName,
 } from '@/utils/config';
-import { getUserFn } from '@/api/user';
+import { getNameFn, getUserFn } from '@/api/user';
 import { getBrandFn, getReportBookingFn, getReportFn } from '@/api/report';
 import { customerSuccess, successDate, successMonth, successWeek } from '@/utils/quantitySuccess';
 import Loading from '../Loading';
@@ -59,6 +59,7 @@ const QuantitySuccess = () => {
   const [valueFilter, setValueFilter] = useState('');
   const [typeLabel2, setTypeLabel2] = useState({ label: 'Thương hiệu', code: '' });
   const [height, setHeight] = useState(0);
+  const [userName, setUserName] = useState({});
 
   const [bodyReportBooking, setBodyReportBooking] = useState({
     token: token,
@@ -85,17 +86,27 @@ const QuantitySuccess = () => {
       setAllUser(removeFirstItem(data.data.data));
     },
   });
-
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
+    onSuccess: (data) => {
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setUserName(data.data.data);
+      }
+    },
+  });
   const queryReportBooking = useQuery({
     queryKey: ['get-report-booking', bodyReportBooking],
     queryFn: () => getReportBookingFn(bodyReportBooking),
   });
-
   const queryReport = useQuery({
     queryKey: ['get-report', bodyReport],
     queryFn: () => getReportFn(bodyReport),
   });
-
   const queryBrand = useQuery({
     queryKey: ['get-brand'],
     queryFn: () => getBrandFn(token),
@@ -116,8 +127,18 @@ const QuantitySuccess = () => {
       if (type === 'week') {
         if (queryReportBooking.isSuccess && queryReport.isSuccess) {
           const date = getDaysOfWeek();
-          setBodyReportBooking((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
-          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReportBooking((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const data = successWeek(removeLastItem(queryReportBooking.data.data.data));
           const table = customerSuccess(removeLastItem(queryReport.data.data.data));
@@ -128,8 +149,18 @@ const QuantitySuccess = () => {
       if (type === 'month') {
         if (queryReportBooking.isSuccess && queryReport.isSuccess) {
           const date = getDaysOfMonth();
-          setBodyReportBooking((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
-          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReportBooking((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const data = successDate(removeLastItem(queryReportBooking.data.data.data));
           const table = customerSuccess(removeLastItem(queryReport.data.data.data));
@@ -140,8 +171,18 @@ const QuantitySuccess = () => {
       if (type === 'year') {
         if (queryReportBooking.isSuccess && queryReport.isSuccess) {
           const date = getDaysOfYear();
-          setBodyReportBooking((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
-          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReportBooking((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const data = successMonth(removeLastItem(queryReportBooking.data.data.data), date.firstDay, date.lastDay);
           const table = customerSuccess(removeLastItem(queryReport.data.data.data));
@@ -151,8 +192,18 @@ const QuantitySuccess = () => {
       }
       if (type === 'date') {
         if (queryReportBooking.isSuccess && queryReport.isSuccess) {
-          setBodyReportBooking((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
-          setBodyReport((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
+          setBodyReportBooking((prev) => ({
+            ...prev,
+            start_date: dateInput.startDate,
+            end_date: dateInput.endDate,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: dateInput.startDate,
+            end_date: dateInput.endDate,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const data = successDate(removeLastItem(queryReportBooking.data.data.data));
           const table = customerSuccess(removeLastItem(queryReport.data.data.data));
@@ -172,6 +223,7 @@ const QuantitySuccess = () => {
     queryReportBooking.isSuccess,
     type,
     dateInput,
+    userName,
   ]);
 
   const handleActive = (type) => {
@@ -260,7 +312,9 @@ const QuantitySuccess = () => {
             >
               Khoảng ngày
             </button>
-            <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
+            {queryGetName.isSuccess && userName.rule === 'admin' && (
+              <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
+            )}
           </div>
         </div>
         {isDate && (

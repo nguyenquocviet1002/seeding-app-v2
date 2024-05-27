@@ -1,6 +1,6 @@
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import expenseStyles from './Expense.module.scss';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import {
@@ -15,7 +15,7 @@ import {
 } from '@/utils/config';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../Loading';
-import { getUserFn } from '@/api/user';
+import { getNameFn, getUserFn } from '@/api/user';
 import SelectUser from '../SelectUser';
 import { getBrandFn, getReportBrandFn, getReportFn } from '@/api/report';
 import { expenseCustomerSuccess, expenseRevenueSuccessWeek, expenseRevenueSuccessYear } from '@/utils/expense';
@@ -38,6 +38,7 @@ const Expense = () => {
   };
   const [token] = useLocalStorage(tokenName, null);
   const initialDate = getDaysOfWeek();
+
   const [allUser, setAllUser] = useState([]);
   const [typeLabel, setTypeLabel] = useState({ label: 'Nhân viên', value: '' });
   const [bodyReport, setBodyReport] = useState({
@@ -64,9 +65,11 @@ const Expense = () => {
   const [isDate, setIsDate] = useState(false);
   const [userFind, setUserFind] = useState({});
   const [table, setTable] = useState([]);
-  const [data, setData] = useState([]);
+  const [data, setData] = useState();
   const [valueFilter, setValueFilter] = useState('');
   const [typeLabel2, setTypeLabel2] = useState({ label: 'Thương hiệu', code: '' });
+  const [height, setHeight] = useState(0);
+  const [userName, setUserName] = useState({});
 
   useQuery({
     queryKey: ['get-user', token],
@@ -75,40 +78,74 @@ const Expense = () => {
       setAllUser(removeFirstItem(data.data.data));
     },
   });
-
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
+    onSuccess: (data) => {
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setUserName(data.data.data);
+      }
+    },
+  });
   const queryReport = useQuery({
     queryKey: ['get-report', bodyReport],
     queryFn: () => getReportFn(bodyReport),
   });
-
   const queryGetReportBrand = useQuery({
     queryKey: ['get-report-brand', bodyReportBrand],
     queryFn: () => getReportBrandFn(bodyReportBrand),
   });
-
   const queryBrand = useQuery({
     queryKey: ['get-brand'],
     queryFn: () => getBrandFn(token),
   });
 
   useEffect(() => {
-    const targetFind = allUser.filter(
-      (item) => item.code_user === (typeLabel.value === '' ? 'US0000015' : typeLabel.value),
-    );
-    setUserFind(targetFind[0] ? targetFind[0] : initialTarget);
+    if (userName === 'admin') {
+      const targetFind = allUser.filter(
+        (item) => item.code_user === (typeLabel.value === '' ? 'US0000015' : typeLabel.value),
+      );
+      setUserFind(targetFind[0] ? targetFind[0] : initialTarget);
+    } else {
+      setUserFind({ kpi_now: userName.kpi_now, kpi_target: userName.kpi_month });
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [allUser, typeLabel]);
+  }, [allUser, typeLabel, userName]);
+
+  const ref = useRef(null);
+
+  useEffect(() => {
+    if (window.innerWidth > 1024) {
+      setHeight(ref.current.clientHeight);
+    } else {
+      setHeight('auto');
+    }
+  }, [data]);
 
   useEffect(() => {
     try {
       if (type === 'week') {
         if (queryReport.isSuccess && queryGetReportBrand.isSuccess) {
           const date = getDaysOfWeek();
-          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
-          setBodyReportBrand((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReportBrand((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
-          const dataReportBrand = expenseRevenueSuccessWeek(removeLastItem(queryGetReportBrand.data.data.data));
+          const dataReportBrand = expenseRevenueSuccessWeek(removeLastItem(queryGetReportBrand.data.data.data), 'week');
 
           setTable(dataReport);
           setData(dataReportBrand);
@@ -117,8 +154,18 @@ const Expense = () => {
       if (type === 'month') {
         if (queryReport.isSuccess && queryGetReportBrand.isSuccess) {
           const date = getDaysOfMonth();
-          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
-          setBodyReportBrand((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReportBrand((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
           const dataReportBrand = expenseRevenueSuccessWeek(removeLastItem(queryGetReportBrand.data.data.data));
@@ -130,8 +177,18 @@ const Expense = () => {
       if (type === 'year') {
         if (queryReport.isSuccess && queryGetReportBrand.isSuccess) {
           const date = getDaysOfYear();
-          setBodyReport((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
-          setBodyReportBrand((prev) => ({ ...prev, start_date: date.firstDay, end_date: date.lastDay }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReportBrand((prev) => ({
+            ...prev,
+            start_date: date.firstDay,
+            end_date: date.lastDay,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
           const dataReportBrand = expenseRevenueSuccessYear(
@@ -146,8 +203,18 @@ const Expense = () => {
       }
       if (type === 'date') {
         if (queryReport.isSuccess && queryGetReportBrand.isSuccess) {
-          setBodyReport((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
-          setBodyReportBrand((prev) => ({ ...prev, start_date: dateInput.startDate, end_date: dateInput.endDate }));
+          setBodyReport((prev) => ({
+            ...prev,
+            start_date: dateInput.startDate,
+            end_date: dateInput.endDate,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
+          setBodyReportBrand((prev) => ({
+            ...prev,
+            start_date: dateInput.startDate,
+            end_date: dateInput.endDate,
+            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+          }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
           const dataReportBrand = expenseRevenueSuccessWeek(removeLastItem(queryGetReportBrand.data.data.data));
@@ -168,6 +235,7 @@ const Expense = () => {
     queryReport.data,
     type,
     dateInput,
+    userName,
   ]);
 
   const handleActive = (type) => {
@@ -193,7 +261,7 @@ const Expense = () => {
       const result = queryReport.data.data.data.filter(
         (item) => removeAccents(item.group_service).search(removeAccents(e.target.value)) !== -1,
       );
-      setTable(result.sort((a, b) => b.so_luong - a.so_luong));
+      setTable(result.sort((a, b) => b.tong_tien - a.tong_tien));
     } else {
       setValueFilter('');
       const table = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
@@ -204,37 +272,6 @@ const Expense = () => {
   const getPercent = () => {
     let percent = ((userFind.kpi_now / userFind.kpi_target) * 100).toFixed(1);
     return percent;
-  };
-
-  const dataBrand = {
-    labels: data.labels,
-    datasets: [
-      {
-        label: 'Tất cả',
-        data: data.all,
-        backgroundColor: '#ff6384',
-      },
-      {
-        label: 'Kangnam',
-        data: data.kn,
-        backgroundColor: '#ff9f40',
-      },
-      {
-        label: 'Đông Á',
-        data: data.da,
-        backgroundColor: '#4bc0c0',
-      },
-      {
-        label: 'Hồng Hà',
-        data: data.hh,
-        backgroundColor: '#9966ff',
-      },
-      {
-        label: 'Paris',
-        data: data.pr,
-        backgroundColor: '#36a2eb',
-      },
-    ],
   };
 
   return (
@@ -282,7 +319,9 @@ const Expense = () => {
             >
               Khoảng ngày
             </button>
-            <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
+            {queryGetName.isSuccess && userName.rule === 'admin' && (
+              <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
+            )}
           </div>
         </div>
         {isDate && (
@@ -333,8 +372,8 @@ const Expense = () => {
           </div>
         </div>
         <div className={expenseStyles['data']}>
-          <div className={expenseStyles['table']}>
-            <div className={expenseStyles['subtitle']}>Mục Tiêu</div>
+          <div className={expenseStyles['table']} style={{ height: height }}>
+            <div className={expenseStyles['subtitle']}>Doanh Thu Theo Dịch Vụ</div>
             <div className={expenseStyles['filter']}>
               <div className={expenseStyles['search']}>
                 <input type="text" value={valueFilter} onChange={searchByName} placeholder="Tìm theo tên dịch vụ..." />
@@ -385,13 +424,13 @@ const Expense = () => {
               </div>
             )}
           </div>
-          <div className={expenseStyles['chart']}>
-            <div className={expenseStyles['subtitle']}>Mục Tiêu</div>
-            <Bar options={options} data={dataBrand} />
+          <div className={expenseStyles['chart']} ref={ref}>
+            <div className={expenseStyles['subtitle']}>Doanh Thu Theo Thương Hiệu</div>
+            <div className={expenseStyles['chart__box']}>{data && <Bar options={options} data={data} />}</div>
           </div>
         </div>
       </div>
-      {queryReport.isLoading && queryGetReportBrand.isLoading && <Loading />}
+      {(queryReport.isLoading || queryGetReportBrand.isLoading) && <Loading />}
     </>
   );
 };

@@ -16,7 +16,7 @@ import { getFormFn } from '@/api/form';
 import { getBookingFn } from '@/api/booking';
 import { quantityDate, quantityWeek, quantityWeekForBrand, quantityYear } from '@/utils/quantityFB';
 import Loading from '../Loading';
-import { getUserFn } from '@/api/user';
+import { getNameFn, getUserFn } from '@/api/user';
 import SelectUser from '../SelectUser';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
@@ -74,6 +74,7 @@ const QuantityFB = () => {
   const [type, setType] = useState('week');
   const [dateInput, setDateInput] = useState({ startDate: '', endDate: '' });
   const [isDate, setIsDate] = useState(false);
+  const [userName, setUserName] = useState({});
 
   const queryGetForm = useQuery({
     queryKey: ['get-form', bodyForm],
@@ -82,6 +83,19 @@ const QuantityFB = () => {
   const queryGetBooking = useQuery({
     queryKey: ['get-booking', bodyBooking],
     queryFn: () => getBookingFn(bodyBooking),
+  });
+  const queryGetName = useQuery({
+    queryKey: ['get-name', token],
+    queryFn: () => getNameFn(token),
+    onSuccess: (data) => {
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setUserName(data.data.data);
+      }
+    },
   });
   useQuery({
     queryKey: ['get-all-user', token],
@@ -242,7 +256,9 @@ const QuantityFB = () => {
             >
               Khoảng ngày
             </button>
-            <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
+            {queryGetName.isSuccess && userName.rule === 'admin' && (
+              <SelectUser labelIndex={typeLabel} data={allUser} eventClick={setUser} />
+            )}
           </div>
         </div>
         {isDate && (

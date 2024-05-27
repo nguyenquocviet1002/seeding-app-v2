@@ -9,6 +9,11 @@
   align-items: center;
   flex-wrap: wrap;
   justify-content: space-between;
+  @media (max-width: 767px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 }
 .title {
   font-size: 18px;
@@ -16,6 +21,8 @@
 }
 .action {
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 5px;
 }
 .cta {
   background-color: #f2f2f2;
@@ -75,7 +82,6 @@
   background-color: #fff;
   border: 1px solid #e6e6e6;
   border-radius: 0.625rem;
-  padding: 1rem 1.25rem;
   margin-top: 15px;
   width: 100%;
 }
@@ -83,9 +89,11 @@
   font-size: 16px;
   font-weight: 600;
   border-bottom: 1px solid #e6e6e6;
+  padding: 0.8rem 1.25rem;
 }
 .process {
   position: relative;
+  padding: 0.8rem 1.25rem;
 }
 .end {
   text-align: end;
@@ -137,6 +145,11 @@
   align-items: flex-start;
   flex-wrap: wrap;
   margin: 0 -10px;
+  @media (max-width: 1023px) {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+    margin: 0;
+  }
 }
 .filter {
   display: flex;
@@ -178,6 +191,10 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  @media (max-width: 1023px) {
+    width: 100%;
+    margin: 10px 0 0;
+  }
   table {
     border-collapse: initial;
     border-spacing: 0;
@@ -206,11 +223,20 @@
   width: calc(60% - 20px);
   flex: 0 0 auto;
   margin: 20px 10px 0;
-  padding: 30px 20px;
   background-color: #fff;
   border: 1px solid #e6e6e6;
   border-radius: 0.625rem;
   overflow: hidden;
+  &__box {
+    padding: 0.8rem 1.25rem;
+  }
+  @media (max-width: 1023px) {
+    width: 100%;
+    margin: 10px 0 0;
+    &__box {
+      padding: 10px;
+    }
+  }
 }
 .box {
   overflow: auto;

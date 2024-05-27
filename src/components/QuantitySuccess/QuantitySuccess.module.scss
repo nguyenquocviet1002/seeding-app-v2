@@ -21,6 +21,8 @@
 }
 .action {
   display: flex;
+  flex-wrap: wrap;
+  row-gap: 5px;
 }
 .cta {
   background-color: #f2f2f2;

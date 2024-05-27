@@ -90,11 +90,13 @@ const Booking = () => {
       name: 'Ngày hẹn lịch',
       selector: (row) => dayjs(row.booking_date).format('DD/MM/YYYY'),
       omit: typeLabel.value === 'lead' ? true : false,
+      grow: 0.8,
     },
     {
       name: 'Hiệu lực đến',
       selector: (row) => dayjs(row.day_expire).format('DD/MM/YYYY'),
       omit: typeLabel.value === 'lead' ? true : false,
+      grow: 0.8,
     },
     {
       name: 'Trạng thái hiệu lực',
@@ -104,6 +106,7 @@ const Booking = () => {
     {
       name: 'Trạng thái',
       selector: (row) => row.stage_id,
+      grow: 0.8,
     },
     {
       name: 'Nhân viên',

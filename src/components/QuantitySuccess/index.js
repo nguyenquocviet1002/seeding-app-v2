@@ -104,7 +104,11 @@ const QuantitySuccess = () => {
   const ref = useRef(null);
 
   useEffect(() => {
-    setHeight(ref.current.clientHeight);
+    if (window.innerWidth > 1024) {
+      setHeight(ref.current.clientHeight);
+    } else {
+      setHeight('auto');
+    }
   }, [data]);
 
   useEffect(() => {
@@ -180,7 +184,7 @@ const QuantitySuccess = () => {
 
   const setUser = (e) => {
     setTypeLabel({ label: e.target.textContent, value: e.target.id });
-    setBodyReportBooking((prev) => ({ ...prev, user: e.target.id }));
+    setBodyReportBooking((prev) => ({ ...prev, user_seeding: e.target.id }));
     setBodyReport((prev) => ({ ...prev, user_seeding: e.target.id }));
   };
 

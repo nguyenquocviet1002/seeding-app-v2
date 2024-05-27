@@ -41,18 +41,34 @@ const Booking = () => {
   const [typeLabel, setTypeLabel] = useState({ label: 'Booking', value: 'opportunity' });
   const [itemDetail, setItemDetail] = useState();
   const [filter, setFilter] = useState();
+  const [user, setUser] = useState({});
 
   const queryGetBooking = useQuery({
     queryKey: ['get-booking', body],
     queryFn: () => getBookingFn(body),
     onSuccess: (data) => {
-      setTotalRows(data.data.data[0].count_no_limit);
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setTotalRows(data.data.data[0].count_no_limit);
+      }
     },
   });
 
   const queryGetName = useQuery({
     queryKey: ['get-name', token],
     queryFn: () => getNameFn(token),
+    onSuccess: (data) => {
+      if (data.data.type === 'access_token') {
+        return;
+      } else if (data.data.type === 'access_token_not_found') {
+        return;
+      } else {
+        setUser(data.data.data);
+      }
+    },
   });
 
   const columns = [
@@ -93,7 +109,8 @@ const Booking = () => {
       name: 'Nhân viên',
       selector: (row) => row.name_user_seeding,
       sortable: true,
-      omit: queryGetName.isSuccess && queryGetName.data.data.data.rule === 'user' ? true : false,
+      omit: queryGetName.isSuccess && user.rule === 'user' ? true : false,
+      grow: 0.5,
     },
     {
       name: 'Xem thêm',
@@ -102,6 +119,8 @@ const Booking = () => {
           Chi tiết
         </Button>
       ),
+      right: true,
+      grow: 0.5,
     },
   ];
 

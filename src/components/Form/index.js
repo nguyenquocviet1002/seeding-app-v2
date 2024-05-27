@@ -107,10 +107,12 @@ const Form = () => {
       name: 'Nhân viên',
       selector: (row) => row.seeding_user_name,
       omit: queryGetName.isSuccess && user.rule === 'user' ? true : false,
+      grow: 0.5,
     },
     {
       name: 'Ngày tạo',
       selector: (row) => dayjs(row.create_date).format('DD/MM/YYYY'),
+      grow: 0.5,
     },
     {
       name: 'Xem thêm',
@@ -119,6 +121,7 @@ const Form = () => {
           Chi tiết
         </Button>
       ),
+      grow: 0.2,
     },
     {
       name: 'Sửa - Xóa',
@@ -141,6 +144,8 @@ const Form = () => {
           ></Button>
         </>
       ),
+      right: true,
+      grow: 0.2,
     },
   ];
 

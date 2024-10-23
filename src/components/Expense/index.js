@@ -29,6 +29,11 @@ const options = {
       position: 'bottom',
     },
   },
+  scales: {
+    y: {
+      suggestedMax: 10,
+    },
+  },
 };
 
 const Expense = () => {
@@ -68,7 +73,7 @@ const Expense = () => {
   const [data, setData] = useState();
   const [valueFilter, setValueFilter] = useState('');
   const [typeLabel2, setTypeLabel2] = useState({ label: 'Thương hiệu', code: '' });
-  const [height, setHeight] = useState(0);
+  // const [height, setHeight] = useState(0);
   const [userName, setUserName] = useState({});
 
   useQuery({
@@ -105,7 +110,7 @@ const Expense = () => {
   });
 
   useEffect(() => {
-    if (userName === 'admin') {
+    if (userName.rule === 'admin') {
       const targetFind = allUser.filter(
         (item) => item.code_user === (typeLabel.value === '' ? 'US0000015' : typeLabel.value),
       );
@@ -118,13 +123,13 @@ const Expense = () => {
 
   const ref = useRef(null);
 
-  useEffect(() => {
-    if (window.innerWidth > 1024) {
-      setHeight(ref.current.clientHeight);
-    } else {
-      setHeight('auto');
-    }
-  }, [data]);
+  // useEffect(() => {
+  //   if (window.innerWidth > 1024) {
+  //     setHeight(ref.current.clientHeight);
+  //   } else {
+  //     setHeight('auto');
+  //   }
+  // }, [data]);
 
   useEffect(() => {
     try {
@@ -135,13 +140,13 @@ const Expense = () => {
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReportBrand((prev) => ({
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
@@ -158,13 +163,13 @@ const Expense = () => {
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReportBrand((prev) => ({
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
@@ -181,13 +186,13 @@ const Expense = () => {
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReportBrand((prev) => ({
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
@@ -207,13 +212,13 @@ const Expense = () => {
             ...prev,
             start_date: dateInput.startDate,
             end_date: dateInput.endDate,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReportBrand((prev) => ({
             ...prev,
             start_date: dateInput.startDate,
             end_date: dateInput.endDate,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const dataReport = expenseCustomerSuccess(removeLastItem(queryReport.data.data.data));
@@ -246,8 +251,7 @@ const Expense = () => {
   };
   const setUser = (e) => {
     setTypeLabel({ label: e.target.textContent, value: e.target.id });
-    setBodyReport((prev) => ({ ...prev, user_seeding: e.target.id }));
-    setBodyReportBrand((prev) => ({ ...prev, user_seeding: e.target.id }));
+    setUserName((prev) => ({ ...prev, username: e.target.textContent, code_seeding: e.target.id }));
   };
 
   const setLabel = (e) => {
@@ -349,30 +353,33 @@ const Expense = () => {
         )}
       </div>
       <div className={expenseStyles['main']}>
-        <div className={expenseStyles['target']}>
-          <div className={expenseStyles['subtitle']}>Mục Tiêu</div>
-          <div className={expenseStyles['process']}>
-            <div className={expenseStyles['end']}>{formatMoney(userFind.kpi_target)}</div>
-            <div className={expenseStyles['back']}>
-              <div className={expenseStyles['front']} style={{ width: `${getPercent() > 100 ? 100 : getPercent()}%` }}>
-                <span>{getPercent()}%</span>
+        <div className={expenseStyles['data']}>
+          <div className={expenseStyles['target']}>
+            <div className={expenseStyles['subtitle']}>Mục Tiêu</div>
+            <div className={expenseStyles['process']}>
+              <div className={expenseStyles['end']}>Mục tiêu: {formatMoney(userFind.kpi_target)}</div>
+              <div className={expenseStyles['back']}>
+                <div
+                  className={expenseStyles['front']}
+                  style={{ width: `${getPercent() > 100 ? 100 : getPercent()}%` }}
+                >
+                  <span>{getPercent()}%</span>
+                </div>
+              </div>
+              <div className={expenseStyles['result']}>
+                <div className={expenseStyles['sub']}></div>
+                <span className={expenseStyles['content']}>Doanh số đã đạt: {formatMoney(userFind.kpi_now)}</span>
+              </div>
+              <div className={expenseStyles['result']}>
+                <div className={`${expenseStyles['sub']} ${expenseStyles['sub-1']}`}></div>
+                <span className={expenseStyles['content']}>
+                  Doanh số chưa đạt:{' '}
+                  {formatMoney(userFind.kpi_target - userFind.kpi_now < 0 ? 0 : userFind.kpi_target - userFind.kpi_now)}
+                </span>
               </div>
             </div>
-            <div className={expenseStyles['result']}>
-              <div className={expenseStyles['sub']}></div>
-              <span className={expenseStyles['content']}>Doanh số đã đạt: {formatMoney(userFind.kpi_now)}</span>
-            </div>
-            <div className={expenseStyles['result']}>
-              <div className={`${expenseStyles['sub']} ${expenseStyles['sub-1']}`}></div>
-              <span className={expenseStyles['content']}>
-                Doanh số chưa đạt:{' '}
-                {formatMoney(userFind.kpi_target - userFind.kpi_now < 0 ? 0 : userFind.kpi_target - userFind.kpi_now)}
-              </span>
-            </div>
           </div>
-        </div>
-        <div className={expenseStyles['data']}>
-          <div className={expenseStyles['table']} style={{ height: height }}>
+          <div className={expenseStyles['table']}>
             <div className={expenseStyles['subtitle']}>Doanh Thu Theo Dịch Vụ</div>
             <div className={expenseStyles['filter']}>
               <div className={expenseStyles['search']}>
@@ -424,10 +431,10 @@ const Expense = () => {
               </div>
             )}
           </div>
-          <div className={expenseStyles['chart']} ref={ref}>
-            <div className={expenseStyles['subtitle']}>Doanh Thu Theo Thương Hiệu</div>
-            <div className={expenseStyles['chart__box']}>{data && <Bar options={options} data={data} />}</div>
-          </div>
+        </div>
+        <div className={expenseStyles['chart']} ref={ref}>
+          <div className={expenseStyles['subtitle']}>Doanh Thu Theo Thương Hiệu</div>
+          <div className={expenseStyles['chart__box']}>{data && <Bar options={options} data={data} />}</div>
         </div>
       </div>
       {(queryReport.isLoading || queryGetReportBrand.isLoading) && <Loading />}

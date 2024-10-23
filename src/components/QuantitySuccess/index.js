@@ -131,13 +131,14 @@ const QuantitySuccess = () => {
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
+
           setBodyReport((prev) => ({
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const data = successWeek(removeLastItem(queryReportBooking.data.data.data));
@@ -153,13 +154,13 @@ const QuantitySuccess = () => {
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReport((prev) => ({
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const data = successDate(removeLastItem(queryReportBooking.data.data.data));
@@ -175,13 +176,13 @@ const QuantitySuccess = () => {
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReport((prev) => ({
             ...prev,
             start_date: date.firstDay,
             end_date: date.lastDay,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const data = successMonth(removeLastItem(queryReportBooking.data.data.data), date.firstDay, date.lastDay);
@@ -196,13 +197,13 @@ const QuantitySuccess = () => {
             ...prev,
             start_date: dateInput.startDate,
             end_date: dateInput.endDate,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
           setBodyReport((prev) => ({
             ...prev,
             start_date: dateInput.startDate,
             end_date: dateInput.endDate,
-            user_seeding: userName.rule === 'admin' ? prev.user_seeding : userName.code_seeding,
+            user_seeding: userName.code_seeding ? userName.code_seeding : '',
           }));
 
           const data = successDate(removeLastItem(queryReportBooking.data.data.data));
@@ -236,8 +237,7 @@ const QuantitySuccess = () => {
 
   const setUser = (e) => {
     setTypeLabel({ label: e.target.textContent, value: e.target.id });
-    setBodyReportBooking((prev) => ({ ...prev, user_seeding: e.target.id }));
-    setBodyReport((prev) => ({ ...prev, user_seeding: e.target.id }));
+    setUserName((prev) => ({ ...prev, username: e.target.textContent, code_seeding: e.target.id }));
   };
 
   const setLabel = (e) => {

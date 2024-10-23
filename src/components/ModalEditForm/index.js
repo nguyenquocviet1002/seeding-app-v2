@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { tokenName } from '@/utils/config';
-import { getCompanyFn, updateFormFn } from '@/api/form';
+import { getCompanyFn, getDoctorFn, updateFormFn } from '@/api/form';
 import Modal from '../Modal';
 import Button from '../Button';
 import modalEditForm from './ModalEditForm.module.scss';
@@ -21,13 +21,24 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
     script: '',
     interactive_proof: '',
     company_id: '',
+    doctor_id: '',
+    doctor_name: '',
   });
   const [company, setCompany] = useState([]);
-  const [value, setValue] = useState('');
+  const [valueFCompany, setValueFCompany] = useState('');
   const [isCompany, setIsCompany] = useState(false);
+  const [doctor, setDoctor] = useState([]);
+  const [valueFDoctor, setValueFDoctor] = useState('');
+  const [isDoctor, setIsDoctor] = useState(false);
 
   useEffect(() => {
-    setDataDetail((prev) => ({ ...prev, ...data, company_id: data ? data.company_code : '' }));
+    setDataDetail((prev) => ({
+      ...prev,
+      ...data,
+      company_id: data ? data.company_code : '',
+      doctor_name: data ? data.doctor_id.name : '',
+      doctor_id: data ? data.doctor_id.id : '',
+    }));
   }, [data]);
 
   const queryClient = useQueryClient();
@@ -37,6 +48,14 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
     queryFn: () => getCompanyFn(token),
     onSuccess: (data) => {
       setCompany(data.data.data);
+    },
+  });
+
+  const queryGetDoctor = useQuery({
+    queryKey: ['get-doctor', token],
+    queryFn: () => getDoctorFn(token),
+    onSuccess: (data) => {
+      setDoctor(data.data.data);
     },
   });
 
@@ -60,46 +79,82 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
     hide();
   };
 
-  const handelValue = (e) => {
+  const handelValue = (e, type) => {
     const valueTarget = e.target.value;
-    setValue(valueTarget);
     const valueNonSpace = valueTarget.toLowerCase().replace(/\s/g, '');
     const valueNonBind = valueNonSpace
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D');
-    const companyFilter = queryGetCompany.data.data.data.filter((item) => {
-      const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
-      const nameCompanyNonBind = nameCompanyNonSpace
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/đ/g, 'd')
-        .replace(/Đ/g, 'D');
-      return nameCompanyNonBind.includes(valueNonBind);
-    });
-    setCompany(companyFilter);
+    if (type === 'company') {
+      setValueFCompany(valueTarget);
+      const companyFilter = queryGetCompany.data.data.data.filter((item) => {
+        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
+        const nameCompanyNonBind = nameCompanyNonSpace
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D');
+        return nameCompanyNonBind.includes(valueNonBind);
+      });
+      setCompany(companyFilter);
+    } else if (type === 'doctor') {
+      setValueFDoctor(valueTarget);
+      const doctorFilter = queryGetDoctor.data.data.data.filter((item) => {
+        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
+        const nameCompanyNonBind = nameCompanyNonSpace
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D');
+        return nameCompanyNonBind.includes(valueNonBind);
+      });
+      setDoctor(doctorFilter);
+    } else {
+      return;
+    }
   };
 
   const setValueCompany = (id, name) => {
     setDataDetail((prev) => ({ ...prev, company_id: id, company_name: name }));
   };
 
-  const toggleSelect = () => {
-    setIsCompany(!isCompany);
+  const setValueDoctor = (id, name) => {
+    setDataDetail((prev) => ({ ...prev, doctor_id: id, doctor_name: name }));
+  };
+
+  const toggleSelect = (type) => {
+    if (type === 'company') {
+      setIsCompany(!isCompany);
+    } else if (type === 'doctor') {
+      setIsDoctor(!isDoctor);
+    } else {
+      return;
+    }
   };
 
   const closeSelect = useCallback(() => {
-    setValue('');
+    setValueFCompany('');
     setIsCompany(false);
     setCompany(queryGetCompany.data.data.data);
   }, [queryGetCompany]);
 
+  const closeSelectDoctor = useCallback(() => {
+    setValueFDoctor('');
+    setIsDoctor(false);
+    setDoctor(queryGetDoctor.data.data.data);
+  }, [queryGetDoctor]);
+
   const refCompany = useRef(null);
+  const refDoctor = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
       if (refCompany.current && !refCompany.current.contains(event.target)) {
-        closeSelect('company');
+        closeSelect();
+      }
+      if (refDoctor.current && !refDoctor.current.contains(event.target)) {
+        closeSelectDoctor();
       }
     }
 
@@ -107,7 +162,7 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [refCompany, closeSelect]);
+  }, [refCompany, refDoctor, closeSelect, closeSelectDoctor]);
 
   return isShow && element === 'ModalEditForm'
     ? ReactDOM.createPortal(
@@ -174,11 +229,16 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
                 {isCompany && (
                   <div className={modalEditForm['option']}>
                     <div className={modalEditForm['filter']}>
-                      <input type="text" value={value} placeholder="Tìm kiếm chi nhánh" onChange={handelValue} />
-                      {value && (
+                      <input
+                        type="text"
+                        value={valueFCompany}
+                        placeholder="Tìm kiếm chi nhánh"
+                        onChange={(e) => handelValue(e, 'company')}
+                      />
+                      {valueFCompany && (
                         <button
                           onClick={() => {
-                            setValue('');
+                            setValueFCompany('');
                             setCompany(queryGetCompany.data.data.data);
                           }}
                         >
@@ -208,6 +268,54 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
               </div>
             </div>
             <div className={modalEditForm['group']}>
+              <div className={modalEditForm['control']} ref={refDoctor}>
+                <label className={modalEditForm['label']}>Bác sĩ</label>
+                <p
+                  className={`${modalEditForm['input']} ${modalEditForm['select']}`}
+                  onClick={() => toggleSelect('doctor')}
+                >
+                  {dataDetail.doctor_name ? dataDetail.doctor_name : 'Chọn bác sĩ'}
+                </p>
+                {isDoctor && (
+                  <div className={modalEditForm['option']}>
+                    <div className={modalEditForm['filter']}>
+                      <input
+                        type="text"
+                        value={valueFDoctor}
+                        placeholder="Tìm kiếm bác sĩ"
+                        onChange={(e) => handelValue(e, 'doctor')}
+                      />
+                      {valueFDoctor && (
+                        <button
+                          onClick={() => {
+                            setValueFDoctor('');
+                            setDoctor(queryGetDoctor.data.data.data);
+                          }}
+                        >
+                          &#10005;
+                        </button>
+                      )}
+                    </div>
+                    {doctor.length > 0 ? (
+                      <ul className={modalEditForm['list']}>
+                        {doctor.map((item) => (
+                          <li
+                            key={item.id}
+                            onClick={() => {
+                              setValueDoctor(item.id, item.name);
+                              closeSelectDoctor();
+                            }}
+                          >
+                            {item.name}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className={modalEditForm['list']}>Không có dữ liệu</div>
+                    )}
+                  </div>
+                )}
+              </div>
               <div className={modalEditForm['control']}>
                 <label className={modalEditForm['label']}>Kịch bản</label>
                 <input
@@ -217,6 +325,8 @@ const ModalEditForm = ({ isShow, hide, element, data, toast, loading }) => {
                   onChange={handleChange('script')}
                 />
               </div>
+            </div>
+            <div className={modalEditForm['group']}>
               <div className={modalEditForm['control']}>
                 <label className={modalEditForm['label']}>Tương tác</label>
                 <input

@@ -1,7 +1,7 @@
 import ReactDOM from 'react-dom';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { createFormFn, getCompanyFn } from '@/api/form';
+import { createFormFn, getCompanyFn, getDoctorFn } from '@/api/form';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { tokenName } from '@/utils/config';
 import Modal from '../Modal';
@@ -21,12 +21,16 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     script: '',
     interactive_proof: '',
     company_id: '',
+    doctor_id: '',
     type: 'seeding',
   };
   const [form, setForm] = useState(initial);
   const [company, setCompany] = useState([]);
-  const [value, setValue] = useState('');
+  const [doctor, setDoctor] = useState([]);
+  const [valueFCompany, setValueFCompany] = useState('');
+  const [valueFDoctor, setValueFDoctor] = useState('');
   const [isCompany, setIsCompany] = useState(false);
+  const [isDoctor, setIsDoctor] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -35,6 +39,14 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     queryFn: () => getCompanyFn(token),
     onSuccess: (data) => {
       setCompany(data.data.data);
+    },
+  });
+
+  const queryGetDoctor = useQuery({
+    queryKey: ['get-doctor', token],
+    queryFn: () => getDoctorFn(token),
+    onSuccess: (data) => {
+      setDoctor(data.data.data);
     },
   });
 
@@ -63,46 +75,84 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     }
   };
 
-  const handelValue = (e) => {
+  const handelValue = (e, type) => {
     const valueTarget = e.target.value;
-    setValue(valueTarget);
     const valueNonSpace = valueTarget.toLowerCase().replace(/\s/g, '');
     const valueNonBind = valueNonSpace
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D');
-    const companyFilter = queryGetCompany.data.data.data.filter((item) => {
-      const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
-      const nameCompanyNonBind = nameCompanyNonSpace
-        .normalize('NFD')
-        .replace(/[\u0300-\u036f]/g, '')
-        .replace(/đ/g, 'd')
-        .replace(/Đ/g, 'D');
-      return nameCompanyNonBind.includes(valueNonBind);
-    });
-    setCompany(companyFilter);
+    if (type === 'company') {
+      setValueFCompany(valueTarget);
+      const companyFilter = queryGetCompany.data.data.data.filter((item) => {
+        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
+        const nameCompanyNonBind = nameCompanyNonSpace
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D');
+        return nameCompanyNonBind.includes(valueNonBind);
+      });
+      setCompany(companyFilter);
+    } else if (type === 'doctor') {
+      setValueFDoctor(valueTarget);
+      const doctorFilter = queryGetDoctor.data.data.data.filter((item) => {
+        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
+        const nameCompanyNonBind = nameCompanyNonSpace
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D');
+        return nameCompanyNonBind.includes(valueNonBind);
+      });
+      setDoctor(doctorFilter);
+    } else {
+      return;
+    }
   };
 
   const setValueCompany = (id, name) => {
     setForm({ ...form, company_id: id, company_name: name });
   };
 
-  const toggleSelect = () => {
-    setIsCompany(!isCompany);
+  const setValueDoctor = (id, name) => {
+    setForm({ ...form, doctor_id: id, doctor_name: name });
+  };
+
+  const toggleSelect = (type) => {
+    if (type === 'company') {
+      setIsCompany(!isCompany);
+    } else if (type === 'doctor') {
+      setIsDoctor(!isDoctor);
+    } else {
+      return;
+    }
   };
 
   const closeSelect = useCallback(() => {
-    setValue('');
+    setValueFCompany('');
     setIsCompany(false);
     setCompany(queryGetCompany.data.data.data);
   }, [queryGetCompany]);
 
+  const closeSelectDoctor = useCallback(() => {
+    setValueFDoctor('');
+    setIsDoctor(false);
+    setDoctor(queryGetDoctor.data.data.data);
+  }, [queryGetDoctor]);
+
   const refCompany = useRef(null);
+  const refDoctor = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
       if (refCompany.current && !refCompany.current.contains(event.target)) {
-        closeSelect('company');
+        closeSelect();
+      }
+      if (refDoctor.current && !refDoctor.current.contains(event.target)) {
+        closeSelectDoctor();
+      } else {
+        return;
       }
     }
 
@@ -110,7 +160,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [refCompany, closeSelect]);
+  }, [refCompany, closeSelect, closeSelectDoctor]);
 
   return isShow && element === 'ModalCreateForm'
     ? ReactDOM.createPortal(
@@ -168,11 +218,16 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
                 {isCompany && (
                   <div className={modalCreateForm['option']}>
                     <div className={modalCreateForm['filter']}>
-                      <input type="text" value={value} placeholder="Tìm kiếm chi nhánh" onChange={handelValue} />
-                      {value && (
+                      <input
+                        type="text"
+                        value={valueFCompany}
+                        placeholder="Tìm kiếm chi nhánh"
+                        onChange={(e) => handelValue(e, 'company')}
+                      />
+                      {valueFCompany && (
                         <button
                           onClick={() => {
-                            setValue('');
+                            setValueFCompany('');
                             setCompany(queryGetCompany.data.data.data);
                           }}
                         >
@@ -202,6 +257,54 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
               </div>
             </div>
             <div className={modalCreateForm['group']}>
+              <div className={modalCreateForm['control']} ref={refDoctor}>
+                <label className={modalCreateForm['label']}>Bác sĩ</label>
+                <p
+                  className={`${modalCreateForm['input']} ${modalCreateForm['select']}`}
+                  onClick={() => toggleSelect('doctor')}
+                >
+                  {form.doctor_name ? form.doctor_name : 'Chọn bác sĩ'}
+                </p>
+                {isDoctor && (
+                  <div className={modalCreateForm['option']}>
+                    <div className={modalCreateForm['filter']}>
+                      <input
+                        type="text"
+                        value={valueFDoctor}
+                        placeholder="Tìm kiếm bác sĩ"
+                        onChange={(e) => handelValue(e, 'doctor')}
+                      />
+                      {valueFDoctor && (
+                        <button
+                          onClick={() => {
+                            setValueFDoctor('');
+                            setDoctor(queryGetDoctor.data.data.data);
+                          }}
+                        >
+                          &#10005;
+                        </button>
+                      )}
+                    </div>
+                    {doctor.length > 0 ? (
+                      <ul className={modalCreateForm['list']}>
+                        {doctor.map((item) => (
+                          <li
+                            key={item.id}
+                            onClick={() => {
+                              setValueDoctor(item.id, item.name);
+                              closeSelectDoctor();
+                            }}
+                          >
+                            {item.name}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className={modalCreateForm['list']}>Không có dữ liệu</div>
+                    )}
+                  </div>
+                )}
+              </div>
               <div className={modalCreateForm['control']}>
                 <label className={modalCreateForm['label']}>Tên Facebook</label>
                 <input
@@ -211,6 +314,8 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
                   onChange={handleChange('name_fb')}
                 />
               </div>
+            </div>
+            <div className={modalCreateForm['group']}>
               <div className={modalCreateForm['control']}>
                 <label className={modalCreateForm['label']}>Link Facebook</label>
                 <input
@@ -220,8 +325,6 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
                   onChange={handleChange('link_fb')}
                 />
               </div>
-            </div>
-            <div className={modalCreateForm['group']}>
               <div className={modalCreateForm['control']}>
                 <label className={modalCreateForm['label']}>Kịch bản</label>
                 <input
@@ -231,6 +334,8 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
                   onChange={handleChange('script')}
                 />
               </div>
+            </div>
+            <div className={modalCreateForm['group']}>
               <div className={modalCreateForm['control']}>
                 <label className={modalCreateForm['label']}>Tương tác</label>
                 <input

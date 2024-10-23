@@ -82,8 +82,6 @@
   background-color: #fff;
   border: 1px solid #e6e6e6;
   border-radius: 0.625rem;
-  margin-bottom: 20px;
-  width: 100%;
 }
 .subtitle {
   font-size: 16px;
@@ -141,14 +139,12 @@
   }
 }
 .main {
+  margin: 20px -10px;
   display: flex;
   align-items: flex-start;
-  flex-wrap: wrap;
-  margin: 0 -10px;
   @media (max-width: 1023px) {
-    flex-direction: column-reverse;
-    align-items: flex-start;
-    margin: 0;
+    margin: 10px 0 0;
+    flex-direction: column;
   }
 }
 .filter {
@@ -182,22 +178,25 @@
   cursor: pointer;
 }
 .data {
+  margin: 0 10px;
   width: calc(40% - 20px);
-  margin: 20px 10px 0;
-  flex: 0 0 auto;
   @media (max-width: 1023px) {
+    margin: 0;
     width: 100%;
-    margin: 10px 0 0;
   }
 }
 .table {
-  width: 100%;
+  margin-top: 20px;
+  height: 500px;
   background-color: #fff;
   border: 1px solid #e6e6e6;
   border-radius: 0.625rem;
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  @media (max-width: 1023px) {
+    margin-top: 10px;
+  }
   table {
     border-collapse: initial;
     border-spacing: 0;
@@ -224,8 +223,7 @@
 }
 .chart {
   width: calc(60% - 20px);
-  flex: 0 0 auto;
-  margin: 20px 10px 0;
+  margin: 0 10px;
   background-color: #fff;
   border: 1px solid #e6e6e6;
   border-radius: 0.625rem;

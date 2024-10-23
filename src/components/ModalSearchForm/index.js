@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { removeFirstItem, tokenName } from '@/utils/config';
-import { getCompanyFn } from '@/api/form';
+import { getCompanyFn, getDoctorFn } from '@/api/form';
 import { getUserFn, getNameFn } from '@/api/user';
 import Modal from '../Modal';
 import Button from '../Button';
@@ -14,6 +14,8 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
   const initial = {
     company_id: '',
     company_name: '',
+    doctor_id: '',
+    doctor_name: '',
     name_fb: '',
     phone: '',
     service: '',
@@ -25,17 +27,28 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
   };
   const [form, setForm] = useState(initial);
   const [company, setCompany] = useState([]);
+  const [doctor, setDoctor] = useState([]);
   const [allUser, setAllUser] = useState([]);
   const [inputCompany, setInputCompany] = useState('');
   const [inputUser, setInputUser] = useState('');
+  const [inputDoctor, setInputDoctor] = useState('');
   const [isCompany, setIsCompany] = useState(false);
   const [isUser, setIsUser] = useState(false);
+  const [isDoctor, setIsDoctor] = useState(false);
 
   const queryGetCompany = useQuery({
     queryKey: ['get-company', token],
     queryFn: () => getCompanyFn(token),
     onSuccess: (data) => {
       setCompany(data.data.data);
+    },
+  });
+
+  const queryGetDoctor = useQuery({
+    queryKey: ['get-doctor', token],
+    queryFn: () => getDoctorFn(token),
+    onSuccess: (data) => {
+      setDoctor(data.data.data);
     },
   });
 
@@ -81,8 +94,7 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
         return nameCompanyNonBind.includes(valueNonBind);
       });
       setCompany(companyFilter);
-    }
-    if (type === 'user') {
+    } else if (type === 'user') {
       setInputUser(valueTarget);
       const userFilter = filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)).filter((item) => {
         const nameUserNonSpace = item.name.toLowerCase().replace(/\s/g, '');
@@ -94,11 +106,29 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
         return nameUserNonBind.includes(valueNonBind);
       });
       setAllUser(userFilter);
+    } else if (type === 'doctor') {
+      setInputDoctor(valueTarget);
+      const doctorFilter = queryGetDoctor.data.data.data.filter((item) => {
+        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
+        const nameCompanyNonBind = nameCompanyNonSpace
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .replace(/đ/g, 'd')
+          .replace(/Đ/g, 'D');
+        return nameCompanyNonBind.includes(valueNonBind);
+      });
+      setDoctor(doctorFilter);
+    } else {
+      return;
     }
   };
 
   const setValueCompany = (id, name) => {
     setForm({ ...form, company_id: id, company_name: name });
+  };
+
+  const setValueDoctor = (id, name) => {
+    setForm({ ...form, doctor_id: id, doctor_name: name });
   };
 
   const setValueUser = (id, name) => {
@@ -108,9 +138,12 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
   const toggleSelect = (type) => {
     if (type === 'company') {
       setIsCompany(!isCompany);
-    }
-    if (type === 'user') {
+    } else if (type === 'user') {
       setIsUser(!isUser);
+    } else if (type === 'doctor') {
+      setIsDoctor(!isDoctor);
+    } else {
+      return;
     }
   };
 
@@ -120,14 +153,19 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
         setInputCompany('');
         setIsCompany(false);
         setCompany(queryGetCompany.data.data.data);
-      }
-      if (type === 'user') {
+      } else if (type === 'user') {
         setInputUser('');
         setIsUser(false);
         setAllUser(filterIsActive(removeFirstItem(queryGetAllUser.data.data.data)));
+      } else if (type === 'doctor') {
+        setInputDoctor('');
+        setIsDoctor(false);
+        setDoctor(queryGetDoctor.data.data.data);
+      } else {
+        return;
       }
     },
-    [queryGetCompany, queryGetAllUser],
+    [queryGetCompany, queryGetAllUser, queryGetDoctor],
   );
 
   const filterIsActive = (data) => {
@@ -136,6 +174,7 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
 
   const refCompany = useRef(null);
   const refUser = useRef(null);
+  const refDoctor = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
       if (refCompany.current && !refCompany.current.contains(event.target)) {
@@ -144,13 +183,16 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
       if (refUser.current && !refUser.current.contains(event.target)) {
         closeSelect('user');
       }
+      if (refDoctor.current && !refDoctor.current.contains(event.target)) {
+        closeSelect('doctor');
+      }
     }
 
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [refCompany, refUser, closeSelect]);
+  }, [refCompany, refUser, refDoctor, closeSelect]);
 
   return isShow && element === 'ModalSearchForm'
     ? ReactDOM.createPortal(
@@ -245,6 +287,56 @@ const ModalSearchForm = ({ isShow, hide, element, event }) => {
                   </div>
                 )}
               </div>
+              <div className={modalSearchForm['control']} ref={refDoctor}>
+                <label className={modalSearchForm['label']}>Bác sĩ</label>
+                <p
+                  className={`${modalSearchForm['input']} ${modalSearchForm['select']}`}
+                  onClick={() => toggleSelect('doctor')}
+                >
+                  {form.doctor_name ? form.doctor_name : 'Chọn bác sĩ'}
+                </p>
+                {isDoctor && (
+                  <div className={modalSearchForm['option']}>
+                    <div className={modalSearchForm['filter']}>
+                      <input
+                        type="text"
+                        value={inputDoctor}
+                        placeholder="Tìm kiếm bác sĩ"
+                        onChange={(e) => handelValue(e, 'doctor')}
+                      />
+                      {isDoctor && (
+                        <button
+                          onClick={() => {
+                            setInputDoctor('');
+                            setDoctor(queryGetDoctor.data.data.data);
+                          }}
+                        >
+                          &#10005;
+                        </button>
+                      )}
+                    </div>
+                    {doctor.length > 0 ? (
+                      <ul className={modalSearchForm['list']}>
+                        {doctor.map((item) => (
+                          <li
+                            key={item.id}
+                            onClick={() => {
+                              setValueDoctor(item.id, item.name);
+                              closeSelect('doctor');
+                            }}
+                          >
+                            {item.name}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <div className={modalSearchForm['list']}>Không có dữ liệu</div>
+                    )}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className={modalSearchForm['group']}>
               {queryGetName.isSuccess && queryGetName.data.data.data.rule === 'admin' && (
                 <div className={modalSearchForm['control']} ref={refUser}>
                   <label className={modalSearchForm['label']}>Nhân viên</label>

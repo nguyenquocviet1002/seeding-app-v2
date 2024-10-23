@@ -34,6 +34,7 @@ const Form = () => {
     phone: '',
     service: '',
     name: '',
+    doctor_id: '',
     start_date: '',
     end_date: '',
     user_seeding: '',
@@ -215,6 +216,7 @@ const Form = () => {
                 {filter.company_name && (
                   <span className={formStyles['filter__item']}>Chi nhánh: {filter.company_name}</span>
                 )}
+                {filter.doctor_name && <span className={formStyles['filter__item']}>Bác sĩ: {filter.doctor_name}</span>}
                 {filter.name_seeding && (
                   <span className={formStyles['filter__item']}>Tên nhân viên: {filter.name_seeding}</span>
                 )}

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import selectStyles from './Select.module.scss';
+import selectUserStyles from './SelectUser.module.scss';
 
 const SelectUser = ({ labelIndex, data, eventClick }) => {
   const userIsActive = data.filter((item) => item.active_user === true);
@@ -19,14 +19,14 @@ const SelectUser = ({ labelIndex, data, eventClick }) => {
   }, [ref]);
 
   return (
-    <div className={selectStyles['select']} ref={ref}>
-      <button className={selectStyles['select__label']} onClick={() => setIsDropdown(!isDropdown)}>
+    <div className={selectUserStyles['select']} ref={ref}>
+      <button className={selectUserStyles['select__label']} onClick={() => setIsDropdown(!isDropdown)}>
         {labelIndex.label}
       </button>
       {isDropdown && (
-        <div className={selectStyles['select__dropdown']}>
+        <div className={selectUserStyles['select__dropdown']}>
           <div
-            className={selectStyles['select__item']}
+            className={selectUserStyles['select__item']}
             id=""
             onClick={(e) => {
               eventClick(e);
@@ -38,7 +38,7 @@ const SelectUser = ({ labelIndex, data, eventClick }) => {
           {userIsActive.map((item, index) => (
             <div
               key={index}
-              className={selectStyles['select__item']}
+              className={selectUserStyles['select__item']}
               id={item.code_user}
               onClick={(e) => {
                 eventClick(e);

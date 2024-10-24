@@ -4,7 +4,7 @@ import { useModal } from '../../hooks/useModal';
 import ItemNav from '../ItemNav';
 import sidebarStyles from './Sidebar.module.scss';
 import ModalConfirm from '../ModalConfirm';
-import logo from '/logo.svg';
+import logo from '/logo-sci.svg';
 import barsSolid from '/bars-solid.svg';
 import xmarkSolid from '/xmark-solid.svg';
 

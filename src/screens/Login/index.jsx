@@ -6,7 +6,7 @@ import { tokenName } from '../../utils/config';
 import { getTokenFn } from '../../api/auth';
 import Loading from '../../components/Loading';
 import loginStyles from './Login.module.scss';
-import logo from '/logo.svg';
+import logo from '/logo-sci.svg';
 import eyeRegular from '/eye-regular.svg';
 import eyeSlashRegular from '/eye-slash-regular.svg';
 

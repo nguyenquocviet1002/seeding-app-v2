@@ -37,10 +37,6 @@ const options = {
 };
 
 const Expense = () => {
-  const initialTarget = {
-    kpi_now: 0,
-    kpi_target: 0,
-  };
   const [token] = useLocalStorage(tokenName, null);
   const initialDate = getDaysOfWeek();
 
@@ -111,10 +107,15 @@ const Expense = () => {
 
   useEffect(() => {
     if (userName.rule === 'admin') {
-      const targetFind = allUser.filter(
-        (item) => item.code_user === (typeLabel.value === '' ? 'US0000015' : typeLabel.value),
-      );
-      setUserFind(targetFind[0] ? targetFind[0] : initialTarget);
+      let kpi_now = 0,
+        kpi_target = 0;
+      allUser.forEach((item) => {
+        if (item.active_user === true) {
+          kpi_now += item.kpi_now;
+          kpi_target += item.kpi_target;
+        }
+      });
+      setUserFind({ kpi_now: kpi_now, kpi_target: kpi_target });
     } else {
       setUserFind({ kpi_now: userName.kpi_now, kpi_target: userName.kpi_month });
     }

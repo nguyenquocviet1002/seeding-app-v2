@@ -175,6 +175,7 @@ const Staff = () => {
               value={valueSearch}
               placeholder="Tìm kiếm theo tên"
               onChange={(e) => setValueSearch(e.target.value)}
+              autoComplete="false"
             />
             <div className={staffStyles['cta']}>
               <Button classItem="primary" icon="plus-solid.svg" event={() => toggle('ModalCreateUser')}>

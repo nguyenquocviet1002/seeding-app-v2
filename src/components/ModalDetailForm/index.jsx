@@ -105,6 +105,10 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
             </div>
             <div className={modalDetailForm['group']}>
               <div className={modalDetailForm['control']}>
+                <label className={modalDetailForm['label']}>Bác sĩ</label>
+                <input type="text" className={modalDetailForm['input']} value={data.doctor_id.name} disabled />
+              </div>
+              <div className={modalDetailForm['control']}>
                 <label className={modalDetailForm['label']}>Thời gian</label>
                 <input
                   type="text"
@@ -113,6 +117,8 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
                   disabled
                 />
               </div>
+            </div>
+            <div className={modalDetailForm['group']}>
               {queryGetName.isSuccess && queryGetName.data.data.data.rule === 'admin' && (
                 <div className={modalDetailForm['control']}>
                   <label className={modalDetailForm['label']}>Ticket Caresoft</label>

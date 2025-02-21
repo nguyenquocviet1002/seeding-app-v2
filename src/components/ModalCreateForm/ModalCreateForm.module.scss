@@ -46,6 +46,11 @@
   -webkit-print-color-adjust: exact;
   print-color-adjust: exact;
   user-select: none;
+  span{
+    overflow: hidden;
+    width:99%;
+    display: block;
+  }
 }
 .option {
   background-color: #fff;

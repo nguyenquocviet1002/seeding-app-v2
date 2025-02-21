@@ -26,51 +26,11 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
   };
   const [form, setForm] = useState(initial);
   const [company, setCompany] = useState([]);
-  const dataFanpage = [
-    {
-      id: 1,
-      name: 'BS Lucas Hoàng',
-      link: 'https://www.facebook.com/profile.php?id=61566337224475'
-    },
-    {
-      id: 2,
-      name: 'BS Henry',
-      link: 'https://www.facebook.com/drhenrykangnam'
-    },
-    {
-      id: 3,
-      name: 'BS Felix',
-      link: 'https://www.facebook.com/drfelixtrankangnam'
-    },
-    {
-      id: 4,
-      name: 'Bác sỹ Henry Nguyễn',
-      link: 'https://www.facebook.com/Bacsihenrynguyenx'
-    },
-    {
-      id: 5,
-      name: 'BS Victo Vũ',
-      link: 'https://www.facebook.com/DrVictorVuBVTMKangNam'
-    },
-    {
-      id: 6,
-      name: 'BS Edward Nguyễn',
-      link: 'https://www.facebook.com/bacsiedwardnguyenkangnam'
-    },
-    {
-      id: 7,
-      name: 'BS Felix Trần',
-      link: 'https://www.facebook.com/DrFelixTranBVTMKangnam'
-    },
-  ];
-  const [fanpage, setFanpage] = useState([... dataFanpage]);
   const [doctor, setDoctor] = useState([]);
-  const [valueFFanpage, setValueFFanpage] = useState('');
   const [valueFCompany, setValueFCompany] = useState('');
   const [valueFDoctor, setValueFDoctor] = useState('');
   const [isCompany, setIsCompany] = useState(false);
   const [isDoctor, setIsDoctor] = useState(false);
-  const [isFanpage, setIsFanpage] = useState(false);
 
   const queryClient = useQueryClient();
 
@@ -147,18 +107,6 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
         return nameCompanyNonBind.includes(valueNonBind);
       });
       setDoctor(doctorFilter);
-    }else if (type === 'fanpage') {
-      setValueFFanpage(valueTarget);
-      const fanpageFilter = dataFanpage.filter((item) => {
-        const nameFanpageNonSpace = item.name.toLowerCase().replace(/\s/g, '');
-        const nameFanpageNonBind = nameFanpageNonSpace
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/đ/g, 'd')
-          .replace(/Đ/g, 'D');
-        return nameFanpageNonBind.includes(valueNonBind);
-      });
-      setFanpage(fanpageFilter);
     } else {
       return;
     }
@@ -166,10 +114,6 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
 
   const setValueCompany = (id, name) => {
     setForm({ ...form, company_id: id, company_name: name });
-  };
-
-  const setValueFanpage = (id, name, link) => {
-    setForm({ ...form, interactive_proof_id: id, interactive_proof_name: name, interactive_proof: link });
   };
 
   const setValueDoctor = (id, name) => {
@@ -181,8 +125,6 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
       setIsCompany(!isCompany);
     } else if (type === 'doctor') {
       setIsDoctor(!isDoctor);
-    } else if( type === 'fanpage'){
-      setIsFanpage((!isFanpage));
     } else {
       return;
     }
@@ -200,12 +142,6 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     setDoctor(queryGetDoctor.data.data.data);
   }, [queryGetDoctor]);
 
-  const closeSelectFanpage = useCallback(() => {
-    setValueFFanpage('');
-    setIsFanpage(false);
-    setFanpage([... dataFanpage]);
-  }, [queryGetDoctor]);
-
   const refCompany = useRef(null);
   const refDoctor = useRef(null);
   const refFanpage = useRef(null);
@@ -215,7 +151,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
         closeSelect();
       }
       if (refFanpage.current && !refFanpage.current.contains(event.target)) {
-        closeSelectFanpage();
+        closeSelect();
       }
       if (refDoctor.current && !refDoctor.current.contains(event.target)) {
         closeSelectDoctor();
@@ -228,7 +164,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [refCompany, closeSelect, closeSelectDoctor, closeSelectFanpage]);
+  }, [refCompany, closeSelect, closeSelectDoctor]);
 
   return isShow && element === 'ModalCreateForm'
     ? ReactDOM.createPortal(
@@ -415,42 +351,42 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
               </div>
             </div> */}
             <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']} ref={refFanpage}>
-                <label className={modalCreateForm['label']}>Link Fanpage [ Bác sĩ ]</label>
+              <div className={modalCreateForm['control']} ref={refCompany}>
+                <label className={modalCreateForm['label']}>Link Fanpage [Bác sĩ]</label>
                 <p
                   className={`${modalCreateForm['input']} ${modalCreateForm['select']}`}
-                  onClick={() => toggleSelect('fanpage')}
+                  onClick={() => toggleSelect('company')}
                 >
-                  <span>{form.interactive_proof ? form.interactive_proof : 'Chọn Fanpage Bác sĩ'}</span>
+                  {form.company_name ? form.company_name : 'Chọn chi nhánh'}
                 </p>
-                {isFanpage && (
+                {isCompany && (
                   <div className={modalCreateForm['option']}>
                     <div className={modalCreateForm['filter']}>
                       <input
                         type="text"
-                        value={valueFFanpage}
+                        value={valueFCompany}
                         placeholder="Tìm kiếm chi nhánh"
-                        onChange={(e) => handelValue(e, 'fanpage')}
+                        onChange={(e) => handelValue(e, 'company')}
                       />
-                      {valueFFanpage && (
+                      {valueFCompany && (
                         <button
                           onClick={() => {
-                            setValueFFanpage('');
-                            setFanpage([... dataFanpage]);
+                            setValueFCompany('');
+                            setCompany(queryGetCompany.data.data.data);
                           }}
                         >
                           &#10005;
                         </button>
                       )}
                     </div>
-                    {fanpage.length > 0 ? (
+                    {company.length > 0 ? (
                       <ul className={modalCreateForm['list']}>
-                        {fanpage.map((item) => (
+                        {company.map((item) => (
                           <li
                             key={item.id}
                             onClick={() => {
-                              setValueFanpage(item.id, item.name, item.link);
-                              closeSelectFanpage();
+                              setValueCompany(item.code, item.name);
+                              closeSelect();
                             }}
                           >
                             {item.name}

@@ -92,7 +92,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
                 />
               </div>
               <div className={modalDetailForm['control']}>
-                <label className={modalDetailForm['label']}>Tương tác</label>
+                <label className={modalDetailForm['label']}>Link Fanpage [Bác sĩ]</label>
                 <a
                   href={data.interactive_proof}
                   className={`${modalDetailForm['input']} ${modalDetailForm['link']}`}

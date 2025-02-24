@@ -6,11 +6,21 @@
   cursor: pointer;
   display: flex;
   align-items: center;
-  &.active,
-  &:hover {
-    color: #f8b940;
+  opacity: .7;
+  &:hover{
+    opacity: 1;
     .icon {
-      background-color: #f8b940;
+      opacity: 1;
+    }
+  }
+
+  &.active
+  {
+    // color: #f8b940;
+    background:#ce9a3c;
+    opacity: 1;
+    .icon {
+      opacity: 1;
     }
   }
 }
@@ -19,7 +29,8 @@
   height: 18px;
   margin-right: 10px;
   transition: all 0.5s;
-  background-color: #fff;
+  // background-color: #fff;
   mask-repeat: no-repeat;
   mask-size: contain;
+  opacity: .7;
 }

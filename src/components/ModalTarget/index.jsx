@@ -17,6 +17,7 @@ import Table from '../Table';
 import Button from '../Button';
 
 import modalTargetStyles from './ModalTarget.module.scss';
+import { images } from '../../assets/images.jsx';
 
 const ModalTarget = ({ isShow, hide, element, toast, user }) => {
   const [token] = useLocalStorage(tokenName, null);
@@ -135,7 +136,7 @@ const ModalTarget = ({ isShow, hide, element, toast, user }) => {
               setIsEdit(true);
               setIsAdd(false);
             }}
-            icon="pencil-solid.svg"
+            icon={images.pencil_solid}
             size="small"
           ></Button>
         ) : (
@@ -147,7 +148,7 @@ const ModalTarget = ({ isShow, hide, element, toast, user }) => {
                 setIsEdit(false);
                 setEditTarget(initialEditTarget);
               }}
-              icon="check-solid.svg"
+              icon={images.check_solid}
               size="small"
             ></Button>
             <Button
@@ -156,7 +157,7 @@ const ModalTarget = ({ isShow, hide, element, toast, user }) => {
                 setIsEdit(false);
                 setEditTarget(initialEditTarget);
               }}
-              icon="xmark-solid.svg"
+              icon={images.xmark_solid}
               size="small"
             ></Button>
           </div>

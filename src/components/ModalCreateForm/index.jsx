@@ -26,6 +26,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
   };
   const [form, setForm] = useState(initial);
   const [company, setCompany] = useState([]);
+  // Khai báo Data Fanpage
   const dataFanpage = [
     {
       id: 1,
@@ -63,13 +64,16 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
       link: 'https://www.facebook.com/DrFelixTranBVTMKangnam'
     },
   ];
+  // Khai báo trạng thái Fanpage
   const [fanpage, setFanpage] = useState([... dataFanpage]);
   const [doctor, setDoctor] = useState([]);
+  // Khai báo giá trị tìm kiếm Fanpage
   const [valueFFanpage, setValueFFanpage] = useState('');
   const [valueFCompany, setValueFCompany] = useState('');
   const [valueFDoctor, setValueFDoctor] = useState('');
   const [isCompany, setIsCompany] = useState(false);
   const [isDoctor, setIsDoctor] = useState(false);
+  // Kiểm tra trang thái Fanpage
   const [isFanpage, setIsFanpage] = useState(false);
 
   const queryClient = useQueryClient();
@@ -149,6 +153,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
       setDoctor(doctorFilter);
     }else if (type === 'fanpage') {
       setValueFFanpage(valueTarget);
+      // Lọc dữ liệu Fanpage
       const fanpageFilter = dataFanpage.filter((item) => {
         const nameFanpageNonSpace = item.name.toLowerCase().replace(/\s/g, '');
         const nameFanpageNonBind = nameFanpageNonSpace
@@ -168,6 +173,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     setForm({ ...form, company_id: id, company_name: name });
   };
 
+  // Thêm giá trị Fanpage
   const setValueFanpage = (id, name, link) => {
     setForm({ ...form, interactive_proof_id: id, interactive_proof_name: name, interactive_proof: link });
   };
@@ -182,6 +188,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     } else if (type === 'doctor') {
       setIsDoctor(!isDoctor);
     } else if( type === 'fanpage'){
+      // Thay đổi trạng thái Fanpage
       setIsFanpage((!isFanpage));
     } else {
       return;
@@ -200,6 +207,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     setDoctor(queryGetDoctor.data.data.data);
   }, [queryGetDoctor]);
 
+  // Đóng chọn Fanpage
   const closeSelectFanpage = useCallback(() => {
     setValueFFanpage('');
     setIsFanpage(false);
@@ -208,12 +216,14 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
 
   const refCompany = useRef(null);
   const refDoctor = useRef(null);
+  // Thêm ref Fanpage
   const refFanpage = useRef(null);
   useEffect(() => {
     function handleClickOutside(event) {
       if (refCompany.current && !refCompany.current.contains(event.target)) {
         closeSelect();
       }
+      // Thêm điều kiện đóng chọn Fanpage
       if (refFanpage.current && !refFanpage.current.contains(event.target)) {
         closeSelectFanpage();
       }
@@ -414,9 +424,15 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
                 />
               </div>
             </div> */}
+            {/* // Thêm dữ liệu Fanpage */}
             <div className={modalCreateForm['group']}>
               <div className={modalCreateForm['control']} ref={refFanpage}>
-                <label className={modalCreateForm['label']}>Link Fanpage [ Bác sĩ ]</label>
+                <label className={modalCreateForm['label']}>
+                  Link Fanpage Bác sĩ 
+                  {
+                    form.interactive_proof && (<span onClick={() => setValueFanpage('')}>[ Hủy bỏ ]</span>)
+                  } 
+                </label>
                 <p
                   className={`${modalCreateForm['input']} ${modalCreateForm['select']}`}
                   onClick={() => toggleSelect('fanpage')}

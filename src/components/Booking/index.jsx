@@ -13,6 +13,7 @@ import ModalSearchBooking from '../ModalSearchBooking';
 import ModalDetailBooking from '../ModalDetailBooking';
 import Loading from '../Loading';
 import bookingStyles from './Booking.module.scss';
+import { images } from '../../assets/images.jsx';
 
 const Booking = () => {
   const [token] = useLocalStorage(tokenName, null);
@@ -170,7 +171,7 @@ const Booking = () => {
                   Xóa bộ lọc
                 </Button>
               )}
-              <Button classItem="primary" icon="magnifying-glass-solid.svg" event={() => toggle('ModalSearchBooking')}>
+              <Button classItem="primary" icon={images.magnifying_glass_solid} event={() => toggle('ModalSearchBooking')}>
                 Tìm kiếm
               </Button>
               <Select labelIndex={typeLabel} data={label} eventClick={setType} />

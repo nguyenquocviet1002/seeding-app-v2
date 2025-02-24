@@ -18,11 +18,14 @@ const ItemNav = ({ href, icon, children, closeSidebar, check }) => {
     >
       <span
         className={itemNavStyles['icon']}
-        style={{
-          WebkitMaskImage: `url(${icon})`,
-          maskImage: `url(${icon})`,
-        }}
-      ></span>
+        // style={{
+        //   WebkitMaskImage: `url(${icon})`,
+        //   maskImage: `url(${icon})`,
+        // }}
+      >
+        <img src={icon} alt='icon' />
+
+      </span>
       {children}
     </NavLink>
   );

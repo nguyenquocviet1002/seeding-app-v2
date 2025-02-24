@@ -2,9 +2,7 @@ import ReactDOM from 'react-dom';
 import dayjs from 'dayjs';
 import Modal from '../Modal';
 import modalDetailBookingStyles from './ModalDetailBooking.module.scss';
-import iconInfo from '/icon-info.png';
-import iconBookmark from '/icon-bookmark.png';
-import iconCompany from '/icon-company.png';
+import { images } from '../../assets/images.jsx';
 
 const ModalDetailBooking = ({ isShow, hide, element, data }) => {
   return isShow && element === 'ModalDetailBooking'
@@ -15,7 +13,7 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
               <div className={modalDetailBookingStyles['aside']}>
                 <div className={modalDetailBookingStyles['infoName']}>
                   <div className={modalDetailBookingStyles['infoIcon']}>
-                    <img width="150" height="150" src={iconInfo} alt="" />
+                    <img width="150" height="150" src={images.iconInfo} alt="" />
                   </div>
                   <span>Thông tin cá nhân</span>
                 </div>
@@ -67,7 +65,7 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
               <div className={modalDetailBookingStyles['aside']}>
                 <div className={modalDetailBookingStyles['infoName']}>
                   <div className={modalDetailBookingStyles['infoIcon']}>
-                    <img width="150" height="150" src={iconBookmark} alt="" />
+                    <img width="150" height="150" src={images.iconBookmark} alt="" />
                   </div>
                   <span>Thông tin cá nhân</span>
                 </div>
@@ -126,7 +124,7 @@ const ModalDetailBooking = ({ isShow, hide, element, data }) => {
             <div className={modalDetailBookingStyles['main']}>
               <div className={modalDetailBookingStyles['infoName']}>
                 <div className={modalDetailBookingStyles['infoIcon']}>
-                  <img width="150" height="150" src={iconCompany} alt="" />
+                  <img width="150" height="150" src={images.iconCompany} alt="" />
                 </div>
                 <span>Thương hiệu</span>
               </div>

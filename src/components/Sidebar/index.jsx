@@ -4,9 +4,8 @@ import { useModal } from '../../hooks/useModal';
 import ItemNav from '../ItemNav';
 import sidebarStyles from './Sidebar.module.scss';
 import ModalConfirm from '../ModalConfirm';
-import logo from '/logo-sci.svg';
-import barsSolid from '/bars-solid.svg';
-import xmarkSolid from '/xmark-solid.svg';
+
+import { images } from '../../assets/images.jsx';
 
 const Sidebar = ({ isShow, toggleLayout, close, user }) => {
   const { isShowing, cpn, toggle } = useModal();
@@ -20,7 +19,7 @@ const Sidebar = ({ isShow, toggleLayout, close, user }) => {
       <aside className={`${sidebarStyles['sidebar']} ${isShow ? sidebarStyles['show'] : ''}`}>
         <div className={sidebarStyles['logo']}>
           <Link to="/">
-            <img src={logo} alt="" />
+            <img src={images.logo} alt="" />
           </Link>
         </div>
         <nav className={sidebarStyles['nav']}>
@@ -39,10 +38,12 @@ const Sidebar = ({ isShow, toggleLayout, close, user }) => {
         <div
           className={sidebarStyles['buttonMenu']}
           style={{
-            backgroundImage: `${!isShow ? `url(${barsSolid}` : `url(${xmarkSolid}`})`,
+            // backgroundImage: !isShow ? `url(${barsSolid}` : `url(${images.xmark_solid})`,
           }}
           onClick={toggleLayout}
-        ></div>
+        >{
+          !isShow ? <img src={images.barsSolid} /> : <img src={images.xmark_solid} />
+        }</div>
       </aside>
       {isShow && <div className={sidebarStyles['backdrop']} onClick={toggleLayout}></div>}
       <ModalConfirm isShow={isShowing} hide={toggle} element={cpn} event={handleRedirect}>

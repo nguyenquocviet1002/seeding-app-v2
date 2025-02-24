@@ -16,6 +16,7 @@ import ModalEditForm from '../ModalEditForm';
 import ModalConfirm from '../ModalConfirm';
 import Loading from '../Loading';
 import formStyles from './Form.module.scss';
+import { images } from '../../assets/images.jsx';
 
 const Form = () => {
   const queryClient = useQueryClient();
@@ -130,13 +131,13 @@ const Form = () => {
         <>
           <Button
             classItem="primary"
-            icon="pencil-solid.svg"
+            icon={images.pencil_solid}
             size="small"
             event={() => detailForm(row.id, 'ModalEditForm')}
           ></Button>
           <Button
             classItem="danger"
-            icon="trash-solid.svg"
+            icon={images.trash_solid}
             size="small"
             event={() => {
               toggle('ModalConfirm');
@@ -197,10 +198,10 @@ const Form = () => {
                   Xóa bộ lọc
                 </Button>
               )}
-              <Button classItem="primary" icon="magnifying-glass-solid.svg" event={() => toggle('ModalSearchForm')}>
+              <Button classItem="primary" icon={images.magnifying_glass_solid} event={() => toggle('ModalSearchForm')}>
                 Tìm kiếm
               </Button>
-              <Button classItem="primary" icon="plus-solid.svg" event={() => toggle('ModalCreateForm')}>
+              <Button classItem="primary" icon={images.plus_solid} event={() => toggle('ModalCreateForm')}>
                 Thêm mới
               </Button>
             </div>

@@ -13,6 +13,7 @@ import ModalChangePasswordUser from '../ModalChangePasswordUser';
 import ModalCreateUser from '../ModalCreateUser';
 import ModalTarget from '../ModalTarget';
 import staffStyles from './Staff.module.scss';
+import { images } from '../../assets/images.jsx';
 
 const Staff = () => {
   const [token] = useLocalStorage(tokenName, null);
@@ -120,7 +121,7 @@ const Staff = () => {
         <>
           <Button
             classItem="primary"
-            icon="pencil-solid.svg"
+            icon={images.pencil_solid}
             size="small"
             event={() => {
               setUser(row.phone);
@@ -129,7 +130,7 @@ const Staff = () => {
           ></Button>
           <Button
             classItem="danger"
-            icon="ellipsis-vertical-solid.svg"
+            icon={images.ellipsis_vertical_solid}
             size="small"
             event={() => {
               setUserTarget({
@@ -178,7 +179,7 @@ const Staff = () => {
               autoComplete="false"
             />
             <div className={staffStyles['cta']}>
-              <Button classItem="primary" icon="plus-solid.svg" event={() => toggle('ModalCreateUser')}>
+              <Button classItem="primary" icon={images.plus_solid} event={() => toggle('ModalCreateUser')}>
                 Thêm mới
               </Button>
             </div>

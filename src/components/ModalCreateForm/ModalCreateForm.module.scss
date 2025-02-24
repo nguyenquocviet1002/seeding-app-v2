@@ -11,10 +11,19 @@
   position: relative;
 }
 .label {
-  display: block;
+  display: flex;
   color: #111827;
   font-weight: 500;
   margin-bottom: 5px;
+  justify-content: space-between;
+  span{
+    color:blue;
+    cursor: pointer;
+    &:hover{
+      text-decoration: underline;
+      color:red;
+    }
+  }
 }
 .input {
   display: block;

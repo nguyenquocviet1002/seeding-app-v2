@@ -8,8 +8,7 @@ import { tokenName } from '../../utils/config';
 import Modal from '../Modal';
 import Button from '../Button';
 import modalChangePasswordUserStyles from '../ModalChangePassword/ModalChangePassword.module.scss';
-import eyeRegular from '/eye-regular.svg';
-import eyeSlashRegular from '/eye-slash-regular.svg';
+import { images } from '../../assets/images.jsx';
 
 const ModalChangePasswordUser = ({ isShow, hide, element, toast, user }) => {
   const [token, setToken] = useLocalStorage(tokenName, null);
@@ -85,7 +84,7 @@ const ModalChangePasswordUser = ({ isShow, hide, element, toast, user }) => {
                 <span
                   className={modalChangePasswordUserStyles['change']}
                   style={{
-                    backgroundImage: !isTypeP ? `url(${eyeRegular})` : `url(${eyeSlashRegular})`,
+                    backgroundImage: !isTypeP ? `url(${images.eyeRegular})` : `url(${images.eyeSlashRegular})`,
                   }}
                   onClick={() => setIsTypeP(!isTypeP)}
                 ></span>
@@ -106,7 +105,7 @@ const ModalChangePasswordUser = ({ isShow, hide, element, toast, user }) => {
                 <span
                   className={modalChangePasswordUserStyles['change']}
                   style={{
-                    backgroundImage: !isTypeC ? `url(${eyeRegular})` : `url(${eyeSlashRegular})`,
+                    backgroundImage: !isTypeC ? `url(${images.eyeRegular})` : `url(${images.eyeSlashRegular})`,
                   }}
                   onClick={() => setIsTypeC(!isTypeC)}
                 ></span>

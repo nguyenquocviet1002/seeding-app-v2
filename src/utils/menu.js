@@ -1,40 +1,43 @@
+
+import { images } from '../assets/images.jsx';
+
 export const MENU = (role) => {
   if (role === 'admin') {
     return [
       {
         link: 'form',
         title: 'Form',
-        icon: 'table-solid.svg',
+        icon: images.table_solid,
       },
       {
         link: 'lead-booking',
         title: 'Lead/Booking',
-        icon: 'calendar-regular.svg',
+        icon: images.calendar_regular,
       },
       {
         link: 'quantity-fb',
         title: 'Báo cáo số lượng form/booking',
-        icon: 'chart-column-solid.svg',
+        icon: images.chart_column_solid,
       },
       {
         link: 'quantity-success',
         title: 'Báo cáo số lượng khách hàng thành công',
-        icon: 'chart-line-solid.svg',
+        icon: images.chart_line_solid,
       },
       {
         link: 'expense',
         title: 'Báo cáo chi phí',
-        icon: 'sack-dollar-solid.svg',
+        icon: images.sack_dollar_solid,
       },
       {
         link: 'staff',
         title: 'Nhân viên',
-        icon: 'user-group-solid.svg',
+        icon: images.user_group_solid,
       },
       {
         link: 'check-data',
         title: 'Kiểm tra dữ liệu',
-        icon: 'database-solid.svg',
+        icon: images.database_solid,
       },
     ];
   } else {
@@ -42,32 +45,32 @@ export const MENU = (role) => {
       {
         link: 'form',
         title: 'Form',
-        icon: 'table-solid.svg',
+        icon: images.table_solid,
       },
       {
         link: 'lead-booking',
         title: 'Lead/Booking',
-        icon: 'calendar-regular.svg',
+        icon: images.calendar_regular,
       },
       {
         link: 'quantity-fb',
         title: 'Báo cáo số lượng form/booking',
-        icon: 'chart-column-solid.svg',
+        icon: images.chart_column_solid,
       },
       {
         link: 'quantity-success',
         title: 'Báo cáo số lượng khách hàng thành công',
-        icon: 'chart-line-solid.svg',
+        icon: images.chart_line_solid,
       },
       {
         link: 'expense',
         title: 'Báo cáo chi phí',
-        icon: 'sack-dollar-solid.svg',
+        icon: images.sack_dollar_solid,
       },
       {
         link: 'check-data',
         title: 'Kiểm tra dữ liệu',
-        icon: 'database-solid.svg',
+        icon: images.database_solid,
       },
     ];
   }

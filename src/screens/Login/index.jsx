@@ -6,9 +6,7 @@ import { tokenName } from '../../utils/config';
 import { getTokenFn } from '../../api/auth';
 import Loading from '../../components/Loading';
 import loginStyles from './Login.module.scss';
-import logo from '/logo-sci.svg';
-import eyeRegular from '/eye-regular.svg';
-import eyeSlashRegular from '/eye-slash-regular.svg';
+import { images } from '../../assets/images.jsx';
 
 const ScreenLogin = ({ showToast }) => {
   const navigate = useNavigate();
@@ -67,7 +65,7 @@ const ScreenLogin = ({ showToast }) => {
       <div className={loginStyles['login']}>
         <div className={loginStyles['login__box']}>
           <div className={loginStyles['login__right']}>
-            <img width={180} height={95} src={`${logo}`} alt="" />
+            <img width={180} height={95} src={`${images.logo}`} alt="" />
           </div>
           <div className={loginStyles['login__left']}>
             <div className={loginStyles['login__title']}>Quản trị</div>
@@ -95,7 +93,7 @@ const ScreenLogin = ({ showToast }) => {
                 <span
                   className={loginStyles['login__change']}
                   style={{
-                    backgroundImage: !isTypeP ? `url(${eyeRegular})` : `url(${eyeSlashRegular})`,
+                    backgroundImage: !isTypeP ? `url(${images.eyeRegular})` : `url(${images.eyeSlashRegular})`,
                   }}
                   onClick={() => setIsTypeP(!isTypeP)}
                 ></span>

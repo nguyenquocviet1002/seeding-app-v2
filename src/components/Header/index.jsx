@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useModal } from '../../hooks/useModal';
 import Button from '../Button';
 import ModalChangePassword from '../ModalChangePassword';
-import profile from '/profile.png';
+import { images } from '../../assets/images.jsx';
 
 import headerStyles from './Header.module.scss';
 
@@ -26,24 +26,24 @@ const Header = ({ showToast, user }) => {
             <div className={headerStyles['content__left']}></div>
             <div className={headerStyles['content__right']}>
               <div className={headerStyles['cta']}>
-                <Button classItem="light" icon="key-solid.svg" event={() => toggle('ModalChangePassword')}>
+                <Button classItem="light" icon={images.key_solid} event={() => toggle('ModalChangePassword')}>
                   Đổi mật khẩu
                 </Button>
-                <Button classItem="light" icon="right-from-bracket-solid.svg" event={logout}>
+                <Button classItem="light" icon={images.bracket_solid} event={logout}>
                   Đăng xuất
                 </Button>
               </div>
               <div className={headerStyles['user']}>
                 <p className={headerStyles['userName']}>{user.username}</p>
                 <div className={headerStyles['userAvt']} onClick={() => setIsDropdown(!isDropdown)}>
-                  <img src={profile} alt="" />
+                  <img src={images.profile} alt="" />
                 </div>
                 {isDropdown && (
                   <div className={headerStyles['dropdown']}>
-                    <Button classItem="light" icon="key-solid.svg" event={() => toggle('ModalChangePassword')}>
+                    <Button classItem="light" icon={images.key_solid} event={() => toggle('ModalChangePassword')}>
                       Đổi mật khẩu
                     </Button>
-                    <Button classItem="light" icon="right-from-bracket-solid.svg" event={logout}>
+                    <Button classItem="light" icon={images.bracket_solid} event={logout}>
                       Đăng xuất
                     </Button>
                   </div>

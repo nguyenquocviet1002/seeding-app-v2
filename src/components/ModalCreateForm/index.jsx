@@ -108,8 +108,11 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     setForm((prev) => ({ ...prev, [name]: event.target.value }));
   };
   const handelSubmit = () => {
+    const noteString = form.note.length;
     if (!form.name || !form.phone || !form.service || !form.company_id) {
       toast('Vui lòng điền các trường bắt buộc', 'warning');
+    } else if(noteString > 100){
+      toast(`Bạn vùi lòng nhập dưới 100 ký tự! Số ký tự hiện tại: ${noteString}. `, 'warning');
     } else {
       loading();
       queryCreateForm.refetch();

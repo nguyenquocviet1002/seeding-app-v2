@@ -63,6 +63,16 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
       name: 'BS Felix Trần',
       link: 'https://www.facebook.com/DrFelixTranBVTMKangnam'
     },
+    {
+      id: 8,
+      name: 'Bác sĩ Annie Lê',
+      link: 'https://www.facebook.com/DrAnnieLeTruongkhoaBenhvienRHMParis/about_contact_and_basic_info'
+    },
+    {
+      id: 9,
+      name: 'Bác sĩ Aniie Seeding',
+      link: 'https://www.facebook.com/dr.AnnieLe.truongkhoaRHMParis/'
+    },
   ];
   // Khai báo trạng thái Fanpage
   const [fanpage, setFanpage] = useState([... dataFanpage]);

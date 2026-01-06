@@ -6,7 +6,11 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { tokenName } from '../../utils/config';
 import Modal from '../Modal';
 import Button from '../Button';
-import modalCreateForm from './ModalCreateForm.module.scss';
+import styles from './ModalCreateForm.module.scss'; // Đổi alias import thành `styles`
+
+// Import các component mới
+import InputField from './InputField';
+import SelectField from './SelectField';
 
 const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
   const [token] = useLocalStorage(tokenName, null);
@@ -19,72 +23,56 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     service: '',
     note: '',
     script: '',
-    interactive_proof: '',
+    interactive_proof: '', // Lưu link fanpage
     company_id: '',
     doctor_id: '',
     type: 'seeding',
+    type_customer: '', // TRƯỜNG MỚI: type_customer
+    // Thêm các trường để lưu tên hiển thị của các lựa chọn select
+    company_name: '',
+    doctor_name: '',
+    interactive_proof_name: '', // Tên fanpage hiển thị
+    type_customer_name: '', // TRƯỜNG MỚI: Tên hiển thị của type_customer
   };
   const [form, setForm] = useState(initial);
-  const [company, setCompany] = useState([]);
-  // Khai báo Data Fanpage
+  const [companyList, setCompanyList] = useState([]);
   const dataFanpage = [
-    {
-      id: 1,
-      name: 'BS Lucas Hoàng',
-      link: 'https://www.facebook.com/profile.php?id=61566337224475'
-    },
-    {
-      id: 2,
-      name: 'BS Henry',
-      link: 'https://www.facebook.com/drhenrykangnam'
-    },
-    {
-      id: 3,
-      name: 'BS Felix',
-      link: 'https://www.facebook.com/drfelixtrankangnam'
-    },
-    {
-      id: 4,
-      name: 'Bác sỹ Henry Nguyễn',
-      link: 'https://www.facebook.com/Bacsihenrynguyenx'
-    },
-    {
-      id: 5,
-      name: 'BS Victo Vũ',
-      link: 'https://www.facebook.com/DrVictorVuBVTMKangNam'
-    },
-    {
-      id: 6,
-      name: 'BS Edward Nguyễn',
-      link: 'https://www.facebook.com/bacsiedwardnguyenkangnam'
-    },
-    {
-      id: 7,
-      name: 'BS Felix Trần',
-      link: 'https://www.facebook.com/DrFelixTranBVTMKangnam'
-    },
-    {
-      id: 8,
-      name: 'Bác sĩ Annie Lê',
-      link: 'https://www.facebook.com/DrAnnieLeTruongkhoaBenhvienRHMParis/about_contact_and_basic_info'
-    },
-    {
-      id: 9,
-      name: 'Bác sĩ Aniie Seeding',
-      link: 'https://www.facebook.com/dr.AnnieLe.truongkhoaRHMParis/'
-    },
+    { id: 1, name: 'BS Lucas Hoàng', link: 'https://www.facebook.com/profile.php?id=61566337224475' },
+    { id: 2, name: 'BS Henry', link: 'https://www.facebook.com/drhenrykangnam' },
+    { id: 3, name: 'BS Felix', link: 'https://www.facebook.com/drfelixtrankangnam' },
+    { id: 4, name: 'Bác sỹ Henry Nguyễn', link: 'https://www.facebook.com/Bacsihenrynguyenx' },
+    { id: 5, name: 'BS Victo Vũ', link: 'https://www.facebook.com/DrVictorVuBVTMKangNam' },
+    { id: 6, name: 'BS Edward Nguyễn', link: 'https://www.facebook.com/bacsiedwardnguyenkangnam' },
+    { id: 7, name: 'BS Felix Trần', link: 'https://www.facebook.com/DrFelixTranBVTMKangnam' },
+    { id: 8, name: 'Bác sĩ Annie Lê', link: 'https://www.facebook.com/DrAnnieLeTruongkhoaBenhvienRHMParis/about_contact_and_basic_info' },
+    { id: 9, name: 'Bác sĩ Aniie Seeding', link: 'https://www.facebook.com/dr.AnnieLe.truongkhoaRHMParis/' },
   ];
-  // Khai báo trạng thái Fanpage
-  const [fanpage, setFanpage] = useState([... dataFanpage]);
-  const [doctor, setDoctor] = useState([]);
-  // Khai báo giá trị tìm kiếm Fanpage
-  const [valueFFanpage, setValueFFanpage] = useState('');
+  const [fanpageList, setFanpageList] = useState([...dataFanpage]);
+  const [doctorList, setDoctorList] = useState([]);
+
+  // TRƯỜNG MỚI: Data cho Type Customer
+  const dataTypeCustomer = [
+    { id: 'marketing', name: 'Marketing - Việt kiều' },
+    { id: 'branch', name: 'Chi nhánh - Việt Kiều' },
+    { id: 'mkt_oversea', name: 'Marketing - Quốc tế' },
+    { id: 'branch_oversea', name: 'Chi nhánh - Quốc tế' },
+  ];
+  const [typeCustomerList, setTypeCustomerList] = useState([...dataTypeCustomer]);
+
+
   const [valueFCompany, setValueFCompany] = useState('');
   const [valueFDoctor, setValueFDoctor] = useState('');
-  const [isCompany, setIsCompany] = useState(false);
-  const [isDoctor, setIsDoctor] = useState(false);
-  // Kiểm tra trang thái Fanpage
-  const [isFanpage, setIsFanpage] = useState(false);
+  const [valueFFanpage, setValueFFanpage] = useState('');
+  // TRƯỜNG MỚI: Giá trị tìm kiếm cho Type Customer
+  const [valueFTypeCustomer, setValueFTypeCustomer] = useState('');
+
+
+  const [isCompanyOpen, setIsCompanyOpen] = useState(false);
+  const [isDoctorOpen, setIsDoctorOpen] = useState(false);
+  const [isFanpageOpen, setIsFanpageOpen] = useState(false);
+  // TRƯỜNG MỚI: Trạng thái mở/đóng cho Type Customer
+  const [isTypeCustomerOpen, setIsTypeCustomerOpen] = useState(false);
+
 
   const queryClient = useQueryClient();
 
@@ -92,158 +80,206 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     queryKey: ['get-company', token],
     queryFn: () => getCompanyFn(token),
     onSuccess: (data) => {
-      setCompany(data.data.data);
+      setCompanyList(data.data.data);
     },
+    enabled: !!token, // Chỉ chạy query nếu token tồn tại
   });
 
   const queryGetDoctor = useQuery({
     queryKey: ['get-doctor', token],
     queryFn: () => getDoctorFn(token),
     onSuccess: (data) => {
-      setDoctor(data.data.data);
+      setDoctorList(data.data.data);
     },
+    enabled: !!token, // Chỉ chạy query nếu token tồn tại
   });
 
   const queryCreateForm = useQuery({
     queryKey: ['create-form'],
     queryFn: () => createFormFn(form),
-    enabled: false,
+    enabled: false, // Query này sẽ được kích hoạt thủ công khi submit
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['get-form'] });
       loading();
+      setForm(initial); // Reset form sau khi submit thành công
+      hide(); // Ẩn modal
+      toast('Thêm mới thành công', 'success');
     },
+    onError: (error) => {
+      loading(); // Ẩn loading ngay cả khi có lỗi
+      toast(`Lỗi: ${error.message}`, 'error');
+    }
   });
 
   const handleChange = (name) => (event) => {
     setForm((prev) => ({ ...prev, [name]: event.target.value }));
   };
+
   const handelSubmit = () => {
-    const noteString = form.note.length;
-    if (!form.name || !form.phone || !form.service || !form.company_id) {
+    const noteStringLength = form.note.length;
+    // Cập nhật điều kiện kiểm tra các trường bắt buộc
+    if (!form.name || !form.phone || !form.service || !form.company_id || !form.type_customer) {
       toast('Vui lòng điền các trường bắt buộc', 'warning');
-    } else if(noteString > 100){
-      toast(`Bạn vùi lòng nhập dưới 100 ký tự! Số ký tự hiện tại: ${noteString}. `, 'warning');
+      return;
+    } else if (noteStringLength > 100) {
+      toast(`Bạn vui lòng nhập dưới 100 ký tự! Số ký tự hiện tại: ${noteStringLength}. `, 'warning');
+      return;
     } else {
-      loading();
-      queryCreateForm.refetch();
-      setForm(initial);
-      hide();
-      toast('Thêm mới thành công', 'success');
+      loading(); // Hiển thị loading trước khi gửi form
+      queryCreateForm.refetch(); // Kích hoạt query tạo form
     }
   };
 
-  const handelValue = (e, type) => {
-    const valueTarget = e.target.value;
-    const valueNonSpace = valueTarget.toLowerCase().replace(/\s/g, '');
-    const valueNonBind = valueNonSpace
+  const normalizeString = (str) => {
+    return str
+      .toLowerCase()
+      .replace(/\s/g, '')
       .normalize('NFD')
       .replace(/[\u0300-\u036f]/g, '')
       .replace(/đ/g, 'd')
       .replace(/Đ/g, 'D');
+  };
+
+  // Handlers để tìm kiếm trong SelectFields
+  const handleSearch = (e, type) => {
+    const valueTarget = e.target.value;
+    const valueNonBind = normalizeString(valueTarget);
+
     if (type === 'company') {
       setValueFCompany(valueTarget);
-      const companyFilter = queryGetCompany.data.data.data.filter((item) => {
-        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
-        const nameCompanyNonBind = nameCompanyNonSpace
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/đ/g, 'd')
-          .replace(/Đ/g, 'D');
-        return nameCompanyNonBind.includes(valueNonBind);
-      });
-      setCompany(companyFilter);
+      const filtered = queryGetCompany.data?.data?.data.filter((item) =>
+        normalizeString(item.name).includes(valueNonBind)
+      ) || [];
+      setCompanyList(filtered);
     } else if (type === 'doctor') {
       setValueFDoctor(valueTarget);
-      const doctorFilter = queryGetDoctor.data.data.data.filter((item) => {
-        const nameCompanyNonSpace = item.name.toLowerCase().replace(/\s/g, '');
-        const nameCompanyNonBind = nameCompanyNonSpace
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/đ/g, 'd')
-          .replace(/Đ/g, 'D');
-        return nameCompanyNonBind.includes(valueNonBind);
-      });
-      setDoctor(doctorFilter);
-    }else if (type === 'fanpage') {
+      const filtered = queryGetDoctor.data?.data?.data.filter((item) =>
+        normalizeString(item.name).includes(valueNonBind)
+      ) || [];
+      setDoctorList(filtered);
+    } else if (type === 'fanpage') {
       setValueFFanpage(valueTarget);
-      // Lọc dữ liệu Fanpage
-      const fanpageFilter = dataFanpage.filter((item) => {
-        const nameFanpageNonSpace = item.name.toLowerCase().replace(/\s/g, '');
-        const nameFanpageNonBind = nameFanpageNonSpace
-          .normalize('NFD')
-          .replace(/[\u0300-\u036f]/g, '')
-          .replace(/đ/g, 'd')
-          .replace(/Đ/g, 'D');
-        return nameFanpageNonBind.includes(valueNonBind);
-      });
-      setFanpage(fanpageFilter);
-    } else {
-      return;
+      const filtered = dataFanpage.filter((item) =>
+        normalizeString(item.name).includes(valueNonBind)
+      );
+      setFanpageList(filtered);
+    } else if (type === 'type_customer') { // TRƯỜNG MỚI: Tìm kiếm Type Customer
+      setValueFTypeCustomer(valueTarget);
+      const filtered = dataTypeCustomer.filter((item) =>
+        normalizeString(item.name).includes(valueNonBind)
+      );
+      setTypeCustomerList(filtered);
     }
   };
 
-  const setValueCompany = (id, name) => {
-    setForm({ ...form, company_id: id, company_name: name });
-  };
-
-  // Thêm giá trị Fanpage
-  const setValueFanpage = (id, name, link) => {
-    setForm({ ...form, interactive_proof_id: id, interactive_proof_name: name, interactive_proof: link });
-  };
-
-  const setValueDoctor = (id, name) => {
-    setForm({ ...form, doctor_id: id, doctor_name: name });
-  };
-
-  const toggleSelect = (type) => {
+  // Handlers để xóa tìm kiếm trong SelectFields
+  const handleClearSearch = (type) => {
     if (type === 'company') {
-      setIsCompany(!isCompany);
+      setValueFCompany('');
+      setCompanyList(queryGetCompany.data?.data?.data || []);
     } else if (type === 'doctor') {
-      setIsDoctor(!isDoctor);
-    } else if( type === 'fanpage'){
-      // Thay đổi trạng thái Fanpage
-      setIsFanpage((!isFanpage));
-    } else {
-      return;
+      setValueFDoctor('');
+      setDoctorList(queryGetDoctor.data?.data?.data || []);
+    } else if (type === 'fanpage') {
+      setValueFFanpage('');
+      setFanpageList([...dataFanpage]);
+    } else if (type === 'type_customer') { // TRƯỜNG MỚI: Xóa tìm kiếm Type Customer
+      setValueFTypeCustomer('');
+      setTypeCustomerList([...dataTypeCustomer]);
     }
   };
 
-  const closeSelect = useCallback(() => {
+  // Handlers để chọn một item trong SelectFields
+  const handleSelectCompany = (code, name) => {
+    setForm((prev) => ({ ...prev, company_id: code, company_name: name }));
+  };
+
+  const handleSelectDoctor = (id, name) => {
+    setForm((prev) => ({ ...prev, doctor_id: id, doctor_name: name }));
+  };
+
+  const handleSelectFanpage = (id, name, link) => {
+    setForm((prev) => ({ ...prev, interactive_proof_id: id, interactive_proof_name: name, interactive_proof: link }));
+  };
+
+  // Hàm để hủy bỏ lựa chọn Fanpage
+  const clearFanpageSelection = () => {
+    setForm((prev) => ({ ...prev, interactive_proof_id: '', interactive_proof_name: '', interactive_proof: '' }));
+  };
+
+  // TRƯỜNG MỚI: Chọn Type Customer
+  const handleSelectTypeCustomer = (id, name) => {
+    setForm((prev) => ({ ...prev, type_customer: id, type_customer_name: name }));
+  };
+
+  // Hàm chuyển đổi trạng thái mở/đóng của SelectFields
+  const toggleCompany = () => setIsCompanyOpen((prev) => !prev);
+  const toggleDoctor = () => setIsDoctorOpen((prev) => !prev);
+  const toggleFanpage = () => setIsFanpageOpen((prev) => !prev);
+  // TRƯỜNG MỚI: Chuyển đổi Type Customer
+  const toggleTypeCustomer = () => setIsTypeCustomerOpen((prev) => !prev);
+
+
+  // Hàm đóng SelectFields (cũng reset tìm kiếm và danh sách)
+  const closeCompanySelect = useCallback(() => {
     setValueFCompany('');
-    setIsCompany(false);
-    setCompany(queryGetCompany.data.data.data);
-  }, [queryGetCompany]);
+    setIsCompanyOpen(false);
+    if (queryGetCompany.data?.data?.data) {
+      setCompanyList(queryGetCompany.data.data.data);
+    }
+  }, [queryGetCompany.data]);
 
-  const closeSelectDoctor = useCallback(() => {
+  const closeDoctorSelect = useCallback(() => {
     setValueFDoctor('');
-    setIsDoctor(false);
-    setDoctor(queryGetDoctor.data.data.data);
-  }, [queryGetDoctor]);
+    setIsDoctorOpen(false);
+    if (queryGetDoctor.data?.data?.data) {
+      setDoctorList(queryGetDoctor.data.data.data);
+    }
+  }, [queryGetDoctor.data]);
 
-  // Đóng chọn Fanpage
-  const closeSelectFanpage = useCallback(() => {
+  const closeFanpageSelect = useCallback(() => {
     setValueFFanpage('');
-    setIsFanpage(false);
-    setFanpage([... dataFanpage]);
-  }, [queryGetDoctor]);
+    setIsFanpageOpen(false);
+    setFanpageList([...dataFanpage]);
+  }, []);
+
+  // TRƯỜNG MỚI: Đóng Type Customer Select
+  const closeTypeCustomerSelect = useCallback(() => {
+    setValueFTypeCustomer('');
+    setIsTypeCustomerOpen(false);
+    setTypeCustomerList([...dataTypeCustomer]);
+  }, []);
+
 
   const refCompany = useRef(null);
   const refDoctor = useRef(null);
-  // Thêm ref Fanpage
   const refFanpage = useRef(null);
+  // TRƯỜNG MỚI: Ref cho Type Customer
+  const refTypeCustomer = useRef(null);
+
+
   useEffect(() => {
     function handleClickOutside(event) {
-      if (refCompany.current && !refCompany.current.contains(event.target)) {
-        closeSelect();
+      const clickedInsideCompany = refCompany.current && refCompany.current.contains(event.target);
+      const clickedInsideDoctor = refDoctor.current && refDoctor.current.contains(event.target);
+      const clickedInsideFanpage = refFanpage.current && refFanpage.current.contains(event.target);
+      // TRƯỜNG MỚI: Click ngoài Type Customer
+      const clickedInsideTypeCustomer = refTypeCustomer.current && refTypeCustomer.current.contains(event.target);
+
+
+      // Đóng select cụ thể nếu click ở bên ngoài và nó đang mở
+      if (!clickedInsideCompany && isCompanyOpen) {
+        closeCompanySelect();
       }
-      // Thêm điều kiện đóng chọn Fanpage
-      if (refFanpage.current && !refFanpage.current.contains(event.target)) {
-        closeSelectFanpage();
+      if (!clickedInsideDoctor && isDoctorOpen) {
+        closeDoctorSelect();
       }
-      if (refDoctor.current && !refDoctor.current.contains(event.target)) {
-        closeSelectDoctor();
-      } else {
-        return;
+      if (!clickedInsideFanpage && isFanpageOpen) {
+        closeFanpageSelect();
+      }
+      // TRƯỜNG MỚI: Đóng Type Customer nếu click ngoài
+      if (!clickedInsideTypeCustomer && isTypeCustomerOpen) {
+        closeTypeCustomerSelect();
       }
     }
 
@@ -251,266 +287,166 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
-  }, [refCompany, closeSelect, closeSelectDoctor, closeSelectFanpage]);
+  }, [
+    refCompany,
+    refDoctor,
+    refFanpage,
+    refTypeCustomer, // TRƯỜNG MỚI
+    isCompanyOpen,
+    isDoctorOpen,
+    isFanpageOpen,
+    isTypeCustomerOpen, // TRƯỜNG MỚI
+    closeCompanySelect,
+    closeDoctorSelect,
+    closeFanpageSelect,
+    closeTypeCustomerSelect, // TRƯỜNG MỚI
+  ]);
 
   return isShow && element === 'ModalCreateForm'
     ? ReactDOM.createPortal(
-        <>
-          <Modal title="Thêm mới" hide={hide} size="large">
-            <div className={modalCreateForm['note']}>
-              <span className={modalCreateForm['require']}>(*)</span> : trường bắt buộc
-            </div>
-            <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>
-                  Họ tên <span className={modalCreateForm['require']}>(*)</span>
-                </label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.name}
-                  onChange={handleChange('name')}
-                />
-              </div>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>
-                  Số điện thoại <span className={modalCreateForm['require']}>(*)</span>
-                </label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.phone}
-                  onChange={handleChange('phone')}
-                />
-              </div>
-            </div>
-            <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>
-                  Dịch vụ <span className={modalCreateForm['require']}>(*)</span>
-                </label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.service}
-                  onChange={handleChange('service')}
-                />
-              </div>
-              <div className={modalCreateForm['control']} ref={refCompany}>
-                <label className={modalCreateForm['label']}>
-                  Chi nhánh <span className={modalCreateForm['require']}>(*)</span>
-                </label>
-                <p
-                  className={`${modalCreateForm['input']} ${modalCreateForm['select']}`}
-                  onClick={() => toggleSelect('company')}
-                >
-                  {form.company_name ? form.company_name : 'Chọn chi nhánh'}
-                </p>
-                {isCompany && (
-                  <div className={modalCreateForm['option']}>
-                    <div className={modalCreateForm['filter']}>
-                      <input
-                        type="text"
-                        value={valueFCompany}
-                        placeholder="Tìm kiếm chi nhánh"
-                        onChange={(e) => handelValue(e, 'company')}
-                      />
-                      {valueFCompany && (
-                        <button
-                          onClick={() => {
-                            setValueFCompany('');
-                            setCompany(queryGetCompany.data.data.data);
-                          }}
-                        >
-                          &#10005;
-                        </button>
-                      )}
-                    </div>
-                    {company.length > 0 ? (
-                      <ul className={modalCreateForm['list']}>
-                        {company.map((item) => (
-                          <li
-                            key={item.id}
-                            onClick={() => {
-                              setValueCompany(item.code, item.name);
-                              closeSelect();
-                            }}
-                          >
-                            {item.name}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className={modalCreateForm['list']}>Không có dữ liệu</div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']} ref={refDoctor}>
-                <label className={modalCreateForm['label']}>Bác sĩ</label>
-                <p
-                  className={`${modalCreateForm['input']} ${modalCreateForm['select']}`}
-                  onClick={() => toggleSelect('doctor')}
-                >
-                  {form.doctor_name ? form.doctor_name : 'Chọn bác sĩ'}
-                </p>
-                {isDoctor && (
-                  <div className={modalCreateForm['option']}>
-                    <div className={modalCreateForm['filter']}>
-                      <input
-                        type="text"
-                        value={valueFDoctor}
-                        placeholder="Tìm kiếm bác sĩ"
-                        onChange={(e) => handelValue(e, 'doctor')}
-                      />
-                      {valueFDoctor && (
-                        <button
-                          onClick={() => {
-                            setValueFDoctor('');
-                            setDoctor(queryGetDoctor.data.data.data);
-                          }}
-                        >
-                          &#10005;
-                        </button>
-                      )}
-                    </div>
-                    {doctor.length > 0 ? (
-                      <ul className={modalCreateForm['list']}>
-                        {doctor.map((item) => (
-                          <li
-                            key={item.id}
-                            onClick={() => {
-                              setValueDoctor(item.id, item.name);
-                              closeSelectDoctor();
-                            }}
-                          >
-                            {item.name}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className={modalCreateForm['list']}>Không có dữ liệu</div>
-                    )}
-                  </div>
-                )}
-              </div>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>Tên Facebook</label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.name_fb}
-                  onChange={handleChange('name_fb')}
-                />
-              </div>
-            </div>
-            <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>Link Facebook</label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.link_fb}
-                  onChange={handleChange('link_fb')}
-                />
-              </div>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>Kịch bản</label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.script}
-                  onChange={handleChange('script')}
-                />
-              </div>
-            </div>
-            {/* <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']}>
-                <label className={modalCreateForm['label']}>Link Fanpage [Bác sĩ]</label>
-                <input
-                  type="text"
-                  className={modalCreateForm['input']}
-                  value={form.interactive_proof}
-                  onChange={handleChange('interactive_proof')}
-                />
-              </div>
-            </div> */}
-            {/* // Thêm dữ liệu Fanpage */}
-            <div className={modalCreateForm['group']}>
-              <div className={modalCreateForm['control']} ref={refFanpage}>
-                <label className={modalCreateForm['label']}>
-                  Link Fanpage Bác sĩ 
-                  {
-                    form.interactive_proof && (<span onClick={() => setValueFanpage('')}>[ Hủy bỏ ]</span>)
-                  } 
-                </label>
-                <p
-                  className={`${modalCreateForm['input']} ${modalCreateForm['select']}`}
-                  onClick={() => toggleSelect('fanpage')}
-                >
-                  <span>{form.interactive_proof ? form.interactive_proof : 'Chọn Fanpage Bác sĩ'}</span>
-                </p>
-                {isFanpage && (
-                  <div className={modalCreateForm['option']}>
-                    <div className={modalCreateForm['filter']}>
-                      <input
-                        type="text"
-                        value={valueFFanpage}
-                        placeholder="Tìm kiếm chi nhánh"
-                        onChange={(e) => handelValue(e, 'fanpage')}
-                      />
-                      {valueFFanpage && (
-                        <button
-                          onClick={() => {
-                            setValueFFanpage('');
-                            setFanpage([... dataFanpage]);
-                          }}
-                        >
-                          &#10005;
-                        </button>
-                      )}
-                    </div>
-                    {fanpage.length > 0 ? (
-                      <ul className={modalCreateForm['list']}>
-                        {fanpage.map((item) => (
-                          <li
-                            key={item.id}
-                            onClick={() => {
-                              setValueFanpage(item.id, item.name, item.link);
-                              closeSelectFanpage();
-                            }}
-                          >
-                            {item.name}
-                          </li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <div className={modalCreateForm['list']}>Không có dữ liệu</div>
-                    )}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className={modalCreateForm['group--full']}>
-              <label className={modalCreateForm['label']}>Ghi chú</label>
-              <textarea
-                className={modalCreateForm['input']}
-                value={form.note}
-                onChange={handleChange('note')}
-                rows={3}
-              ></textarea>
-            </div>
-            <div className={modalCreateForm['submit']}>
-              <Button classItem="primary" event={() => handelSubmit()}>
-                Thêm mới
-              </Button>
-            </div>
-          </Modal>
-        </>,
-        document.body,
-      )
+      <>
+        <Modal title="Thêm mới" hide={hide} size="large">
+          <div className={styles['note']}>
+            <span className={styles['require']}>(*)</span> : trường bắt buộc
+          </div>
+          <div className={styles['group']}>
+            <InputField
+              label="Họ tên"
+              name="name"
+              value={form.name}
+              onChange={handleChange('name')}
+              required
+            />
+            <InputField
+              label="Số điện thoại"
+              name="phone"
+              type="text"
+              value={form.phone}
+              onChange={handleChange('phone')}
+              required
+            />
+          </div>
+          <div className={styles['group']}>
+            <InputField
+              label="Dịch vụ"
+              name="service"
+              value={form.service}
+              onChange={handleChange('service')}
+              required
+            />
+            <SelectField
+              label="Chi nhánh"
+              fieldRef={refCompany}
+              value={form.company_name} // Hiển thị tên chi nhánh
+              options={companyList}
+              onSelect={handleSelectCompany}
+              onSearch={(e) => handleSearch(e, 'company')}
+              searchValue={valueFCompany}
+              onClearSearch={() => handleClearSearch('company')}
+              isOpen={isCompanyOpen}
+              toggleOpen={toggleCompany}
+              closeSelect={closeCompanySelect}
+              required
+              displayKey="name"
+              valueKey="code" // 'code' là ID của chi nhánh
+              placeholder="Chọn chi nhánh"
+            />
+          </div>
+          <div className={styles['group']}>
+            <SelectField
+              label="Bác sĩ"
+              fieldRef={refDoctor}
+              value={form.doctor_name} // Hiển thị tên bác sĩ
+              options={doctorList}
+              onSelect={handleSelectDoctor}
+              onSearch={(e) => handleSearch(e, 'doctor')}
+              searchValue={valueFDoctor}
+              onClearSearch={() => handleClearSearch('doctor')}
+              isOpen={isDoctorOpen}
+              toggleOpen={toggleDoctor}
+              closeSelect={closeDoctorSelect}
+              displayKey="name"
+              valueKey="id"
+              placeholder="Chọn bác sĩ"
+            />
+            <InputField
+              label="Tên Facebook"
+              name="name_fb"
+              value={form.name_fb}
+              onChange={handleChange('name_fb')}
+            />
+          </div>
+          <div className={styles['group']}>
+            <InputField
+              label="Link Facebook"
+              name="link_fb"
+              value={form.link_fb}
+              onChange={handleChange('link_fb')}
+            />
+            <InputField
+              label="Kịch bản"
+              name="script"
+              value={form.script}
+              onChange={handleChange('script')}
+            />
+          </div>
+          <div className={styles['group']}>
+            <SelectField
+              label="Link Fanpage Bác sĩ"
+              fieldRef={refFanpage}
+              value={form.interactive_proof_name || ''} // Hiển thị tên fanpage đã chọn
+              options={fanpageList}
+              onSelect={handleSelectFanpage}
+              onSearch={(e) => handleSearch(e, 'fanpage')}
+              searchValue={valueFFanpage}
+              onClearSearch={() => handleClearSearch('fanpage')}
+              isOpen={isFanpageOpen}
+              toggleOpen={toggleFanpage}
+              closeSelect={closeFanpageSelect}
+              displayKey="name"
+              valueKey="id"
+              secondValueKey="link" // Truyền thêm link fanpage
+              placeholder="Chọn Fanpage Bác sĩ"
+              clearSelection={clearFanpageSelection} // Cho phép hủy lựa chọn fanpage
+            />
+            {/* TRƯỜNG MỚI: Select cho Type Customer */}
+            <SelectField
+              label="Loại khách hàng"
+              fieldRef={refTypeCustomer}
+              value={form.type_customer_name}
+              options={typeCustomerList}
+              onSelect={handleSelectTypeCustomer}
+              onSearch={(e) => handleSearch(e, 'type_customer')}
+              searchValue={valueFTypeCustomer}
+              onClearSearch={() => handleClearSearch('type_customer')}
+              isOpen={isTypeCustomerOpen}
+              toggleOpen={toggleTypeCustomer}
+              closeSelect={closeTypeCustomerSelect}
+              required
+              displayKey="name"
+              valueKey="id"
+              placeholder="Chọn loại khách hàng"
+            />
+          </div>
+          <div className={styles['group--full']}>
+            <InputField
+              label="Ghi chú"
+              name="note"
+              type="textarea"
+              value={form.note}
+              onChange={handleChange('note')}
+              rows={3}
+            />
+          </div>
+          <div className={styles['submit']}>
+            <Button classItem="primary" event={handelSubmit}>
+              Thêm mới
+            </Button>
+          </div>
+        </Modal>
+      </>,
+      document.body,
+    )
     : null;
 };
 

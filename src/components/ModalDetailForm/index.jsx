@@ -40,7 +40,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.code_form ? data.code_form : 'Trống'} // Thêm optional chaining
+                value={data?.code_form ? data.code_form : 'Trống'}
                 disabled
               />
             </div>
@@ -49,7 +49,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.name ? data.name : 'Trống'} // Thêm optional chaining
+                value={data?.name ? data.name : 'Trống'}
                 disabled
               />
             </div>
@@ -60,19 +60,19 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.phone ? data.phone : 'Trống'} // Thêm optional chaining
+                value={data?.phone ? data.phone : 'Trống'}
                 disabled
               />
             </div>
             <div className={styles['control']}>
               <label className={styles['label']}>Facebook</label>
               <a
-                href={data?.link_fb || '#'} // Thêm optional chaining và fallback href
+                href={data?.link_fb || '#'}
                 className={`${styles['input']} ${styles['link']}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                {data?.name_fb ? data.name_fb : 'Trống'} // Thêm optional chaining
+                {data?.name_fb ? data.name_fb : 'Trống'}
               </a>
             </div>
           </div>
@@ -82,7 +82,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.service ? data.service : 'Trống'} // Thêm optional chaining
+                value={data?.service ? data.service : 'Trống'}
                 disabled
               />
             </div>
@@ -91,7 +91,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.company_name ? data.company_name : 'Trống'} // Thêm optional chaining
+                value={data?.company_name ? data.company_name : 'Trống'}
                 disabled
               />
             </div>
@@ -102,19 +102,19 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.script ? data.script : 'Trống'} // Thêm optional chaining
+                value={data?.script ? data.script : 'Trống'}
                 disabled
               />
             </div>
             <div className={styles['control']}>
               <label className={styles['label']}>Link Fanpage [Bác sĩ]</label>
               <a
-                href={data?.interactive_proof || '#'} // Thêm optional chaining và fallback href
+                href={data?.interactive_proof || '#'}
                 className={`${styles['input']} ${styles['link']}`}
                 target="_blank"
                 rel="noreferrer"
               >
-                {data?.interactive_proof ? data.interactive_proof : 'Trống'} // Thêm optional chaining
+                {data?.interactive_proof ? data.interactive_proof : 'Trống'}
               </a>
             </div>
           </div>
@@ -124,7 +124,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <input
                 type="text"
                 className={styles['input']}
-                value={data?.doctor_id?.name ? data.doctor_id.name : 'Trống'} // Thêm optional chaining cho data và doctor_id
+                value={data?.doctor_id?.name ? data.doctor_id.name : 'Trống'}
                 disabled
               />
             </div>
@@ -152,12 +152,12 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
               <div className={styles['control']}>
                 <label className={styles['label']}>Ticket Caresoft</label>
                 <a
-                  href={data?.link_url || '#'} // Thêm optional chaining và fallback href
+                  href={data?.link_url || '#'}
                   className={`${styles['input']} ${styles['link']}`}
                   target="_blank"
                   rel="noreferrer"
                 >
-                  {data?.link_url ? data.link_url : 'Trống'} // Thêm optional chaining
+                  {data?.link_url ? data.link_url : 'Trống'}
                 </a>
               </div>
             )}
@@ -166,7 +166,7 @@ const ModalDetailForm = ({ isShow, hide, element, data }) => {
             <label className={styles['label']}>Ghi chú</label>
             <textarea
               className={`${styles['input']} ${styles['textarea']}`}
-              value={data?.note ? data.note : 'Trống'} // Thêm optional chaining
+              value={data?.note ? data.note : 'Trống'}
               disabled
             ></textarea>
           </div>

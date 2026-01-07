@@ -118,7 +118,7 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
   const handelSubmit = () => {
     const noteStringLength = form.note.length;
     // Cập nhật điều kiện kiểm tra các trường bắt buộc
-    if (!form.name || !form.phone || !form.service || !form.company_id || !form.type_customer) {
+    if (!form.name || !form.phone || !form.service || !form.company_id) {
       toast('Vui lòng điền các trường bắt buộc', 'warning');
       return;
     } else if (noteStringLength > 100) {
@@ -206,6 +206,12 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
   const clearFanpageSelection = () => {
     setForm((prev) => ({ ...prev, interactive_proof_id: '', interactive_proof_name: '', interactive_proof: '' }));
   };
+
+  // Hủy bỏ lựa chọn Type Customer
+  const clearTypeCustomerSelection = () => {
+    setForm((prev) => ({ ...prev, type_customer: '', type_customer_name: '' }));
+  };
+
 
   // TRƯỜNG MỚI: Chọn Type Customer
   const handleSelectTypeCustomer = (id, name) => {
@@ -422,10 +428,10 @@ const ModalCreateForm = ({ isShow, hide, element, toast, loading }) => {
               isOpen={isTypeCustomerOpen}
               toggleOpen={toggleTypeCustomer}
               closeSelect={closeTypeCustomerSelect}
-              required
               displayKey="name"
               valueKey="id"
               placeholder="Chọn loại khách hàng"
+              clearSelection={clearTypeCustomerSelection} // Cho phép hủy lựa chọn fanpage
             />
           </div>
           <div className={styles['group--full']}>
